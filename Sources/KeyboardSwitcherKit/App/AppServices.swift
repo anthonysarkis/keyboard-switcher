@@ -1,0 +1,81 @@
+import Foundation
+import KeyboardSwitcherCore
+
+public struct AppServices {
+    private static let macOSSettleDuration: Duration = .milliseconds(600)
+    private static let browserTabCheckInterval: TimeInterval = 0.5
+
+    public var keyboardSystem: any KeyboardSystem
+    public var badgeImageMaker: any BadgeImageMaking
+    public var tabReader: any BrowserTabReading
+    public var permissionChecker: any BrowserPermissionChecking
+    public var bubble: any BubblePresenting
+    public var loginItem: any LoginItemControlling
+    public var macKeyboardIcon: any MacKeyboardIconControlling
+    public var rulesStore: RulesStore
+    public var ownBundleIdentifier: String
+    public var settleDuration: Duration
+    public var browserCheckInterval: TimeInterval
+
+    public init(
+        keyboardSystem: any KeyboardSystem,
+        badgeImageMaker: any BadgeImageMaking,
+        tabReader: any BrowserTabReading,
+        permissionChecker: any BrowserPermissionChecking,
+        bubble: any BubblePresenting,
+        loginItem: any LoginItemControlling,
+        macKeyboardIcon: any MacKeyboardIconControlling,
+        rulesStore: RulesStore,
+        ownBundleIdentifier: String,
+        settleDuration: Duration,
+        browserCheckInterval: TimeInterval
+    ) {
+        self.keyboardSystem = keyboardSystem
+        self.badgeImageMaker = badgeImageMaker
+        self.tabReader = tabReader
+        self.permissionChecker = permissionChecker
+        self.bubble = bubble
+        self.loginItem = loginItem
+        self.macKeyboardIcon = macKeyboardIcon
+        self.rulesStore = rulesStore
+        self.ownBundleIdentifier = ownBundleIdentifier
+        self.settleDuration = settleDuration
+        self.browserCheckInterval = browserCheckInterval
+    }
+
+    public static func live(bundleIdentifier: String) -> AppServices {
+        let rulesFileURL = RulesStore.defaultFileURL(bundleIdentifier: bundleIdentifier)
+        let rulesStore = RulesStore(fileURL: rulesFileURL)
+        let keyboardSystem = TextInputSources()
+        let badgeImageMaker = liveBadgeImageMaker()
+        let tabReader = AppleScriptTabReader()
+        let permissionChecker = AutomationPermissionChecker()
+        let bubble = SwitchBubblePanel()
+        let loginItem = MainAppLoginItem()
+        let macKeyboardIcon = TextInputMenuIcon()
+        return AppServices(
+            keyboardSystem: keyboardSystem,
+            badgeImageMaker: badgeImageMaker,
+            tabReader: tabReader,
+            permissionChecker: permissionChecker,
+            bubble: bubble,
+            loginItem: loginItem,
+            macKeyboardIcon: macKeyboardIcon,
+            rulesStore: rulesStore,
+            ownBundleIdentifier: bundleIdentifier,
+            settleDuration: macOSSettleDuration,
+            browserCheckInterval: browserTabCheckInterval
+        )
+    }
+
+    private static func liveBadgeImageMaker() -> any BadgeImageMaking {
+        let macBadgeImages = MacBadgeImages()
+        let drawnBadgeImages = DrawnBadgeImages()
+        if macBadgeImages == nil {
+            Log.badges.error("macOS's own badge drawer is missing, so the app draws the badges itself")
+        } else {
+            Log.badges.notice("Badges come from macOS's own drawer")
+        }
+        return BadgeImagesWithFallback(preferred: macBadgeImages, fallback: drawnBadgeImages)
+    }
+}
