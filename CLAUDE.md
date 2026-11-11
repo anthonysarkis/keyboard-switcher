@@ -10,6 +10,7 @@
 - Install and relaunch: `scripts/install.sh` → `~/Applications/Keyboard Switcher.app`
 - Dev checks: `swift run keyboard-switcher-dev keyboards | switch-test | badges | snapshots <folder>`
 - Check UI changes with `snapshots`, then read the PNGs.
+- README pictures: `swift run keyboard-switcher-dev readme-images` redraws `docs/images` (hero + Settings tabs); `docs/images/icon.png` is `build/AppIcon.iconset/icon_256x256@2x.png`.
 
 ## Conventions
 
@@ -48,6 +49,8 @@
 - `RuleBook.recordManualSwitch` must not announce an edit, or the app's rule would undo the switch you just made.
 - Safari in /Applications is a symlink: resolve it before asking for its icon, or the icon gets an alias arrow.
 - Badges come from macOS's private `KLInputSourceIconManager` (KeyboardLayouts framework), the drawer behind the Mac's own input menu, so they match it pixel for pixel.
+- Outlined capsules use `Capsule(style: .circular)`: `strokeBorder` on the default continuous capsule draws stray vertical lines past its ends.
+- Snapshots can't show switches in their "on" colour (that needs a real front window), so README pictures skip the General tab.
 - `useRoundCorenr:` in `InputSourceIconManaging` is Apple's own spelling: keep the typo, or the call stops matching.
 - Which badge is filled depends on every keyboard that is on (Canadian alone shows "A"): rebuild all badges when the keyboard list changes, never one at a time.
 - If a macOS update removes that drawer, `DrawnBadgeImages` takes over with the measured look: 22 × 16 pt, 5 pt corners, SF semibold 11 pt, narrowed (wdth 65, opsz 16) when the letters don't fit.

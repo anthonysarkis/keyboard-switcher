@@ -7,22 +7,12 @@ enum SnapshotCommand {
     private static let wideBadge = KeyboardBadge(text: "WXYZ", style: .outlined)
 
     static func run(writingTo folder: URL) throws {
-        let application = NSApplication.shared
-        application.setActivationPolicy(.accessory)
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try SnapshotSetup.prepare(folder: folder)
         let context = PreviewContext.make()
 
-        let appsTab = AppsTab(
-            ruleBook: context.ruleBook,
-            catalog: context.catalog,
-            ownBundleIdentifier: context.coordinator.ownBundleIdentifier
-        )
-        let websitesTab = WebsitesTab(ruleBook: context.ruleBook, catalog: context.catalog, tabTracker: context.tabTracker)
-        let generalTab = GeneralTab(ruleBook: context.ruleBook, systemToggles: context.systemToggles)
-
-        try ViewSnapshotter.write(appsTab, named: "settings-apps", in: folder)
-        try ViewSnapshotter.write(websitesTab, named: "settings-websites", in: folder)
-        try ViewSnapshotter.write(generalTab, named: "settings-general", in: folder)
+        try SettingsTabSnapshots.writeAppsTab(of: context, in: folder)
+        try SettingsTabSnapshots.writeWebsitesTab(of: context, in: folder)
+        try SettingsTabSnapshots.writeGeneralTab(of: context, in: folder)
         try writeBadgesAndBubbles(in: folder)
     }
 

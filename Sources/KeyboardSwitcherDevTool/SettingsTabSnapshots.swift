@@ -1,0 +1,23 @@
+import Foundation
+import KeyboardSwitcherKit
+
+enum SettingsTabSnapshots {
+    static func writeAppsTab(of context: AppContext, in folder: URL) throws {
+        let appsTab = AppsTab(
+            ruleBook: context.ruleBook,
+            catalog: context.catalog,
+            ownBundleIdentifier: context.coordinator.ownBundleIdentifier
+        )
+        try ViewSnapshotter.write(appsTab, named: "settings-apps", in: folder)
+    }
+
+    static func writeWebsitesTab(of context: AppContext, in folder: URL) throws {
+        let websitesTab = WebsitesTab(ruleBook: context.ruleBook, catalog: context.catalog, tabTracker: context.tabTracker)
+        try ViewSnapshotter.write(websitesTab, named: "settings-websites", in: folder)
+    }
+
+    static func writeGeneralTab(of context: AppContext, in folder: URL) throws {
+        let generalTab = GeneralTab(ruleBook: context.ruleBook, systemToggles: context.systemToggles)
+        try ViewSnapshotter.write(generalTab, named: "settings-general", in: folder)
+    }
+}

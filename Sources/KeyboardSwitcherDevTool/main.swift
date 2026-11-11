@@ -13,6 +13,15 @@ case "switch-test":
 case "badges":
     let macDrawsTheBadges = BadgeCheck.compareMacAndDrawnBadges()
     exit(macDrawsTheBadges ? 0 : 1)
+case "readme-images":
+    let folderPath = commandArguments.first ?? "docs/images"
+    let folder = URL(fileURLWithPath: folderPath)
+    do {
+        try ReadmeImagesCommand.run(writingTo: folder)
+    } catch {
+        print("README images failed: \(error)")
+        exit(1)
+    }
 case "snapshots":
     let folderPath = commandArguments.first ?? "snapshots"
     let folder = URL(fileURLWithPath: folderPath)
