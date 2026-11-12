@@ -23,7 +23,7 @@ struct RulesStoreTests {
         var rules = StarterRules.make(availableKeyboardIDs: [StarterRules.canadianKeyboardID, StarterRules.canadianCSAKeyboardID])
         rules.setWebsiteRule(website: "claude.ai", keyboardID: StarterRules.canadianKeyboardID)
         rules.lastUsedByApp["com.apple.Notes"] = StarterRules.canadianCSAKeyboardID
-        rules.preferences.manualSwitch = .becomesRule
+        rules.preferences.remembersManualSwitches = false
 
         try store.save(rules)
 
@@ -40,6 +40,16 @@ struct RulesStoreTests {
         #expect(rules.appRules.count == 1)
         #expect(rules.websiteRules.isEmpty)
         #expect(rules.preferences == Preferences())
+    }
+
+    @Test func fileFromTheTwoSwitchVersionOpensRemembering() throws {
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let twoSwitchFile = #"{"version": 1, "preferences": {"showBubble": false, "manualSwitch": "backToRule", "otherApps": "lastUsed"}}"#
+        try Data(twoSwitchFile.utf8).write(to: store.fileURL)
+
+        let rules = try #require(try store.load())
+
+        #expect(rules.preferences == Preferences(showBubble: false, remembersManualSwitches: true))
     }
 
     @Test func unreadableFileCanBeMovedAside() throws {

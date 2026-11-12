@@ -41,8 +41,8 @@ struct RuleResolverTests {
         #expect(decision == KeyboardDecision(keyboardID: canadianCSA, source: .lastUsed))
     }
 
-    @Test func leaveAsIsIgnoresWhatWasRemembered() {
-        let preferences = Preferences(otherApps: .leaveAsIs)
+    @Test func notRememberingIgnoresWhatWasRemembered() {
+        let preferences = Preferences(remembersManualSwitches: false)
         var rules = RulesFile(preferences: preferences)
         rules.lastUsedByApp[notesContext.bundleIdentifier] = canadianCSA
 

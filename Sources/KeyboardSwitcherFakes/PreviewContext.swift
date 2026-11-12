@@ -3,18 +3,24 @@ import KeyboardSwitcherKit
 
 public enum PreviewContext {
     private static let ghostty = AppIdentity(bundleIdentifier: "com.mitchellh.ghostty", name: "Ghostty")
+    private static let sampleBrowserPermissions: [String: BrowserPermission] = [
+        "com.google.Chrome": .allowed,
+        "com.brave.Browser": .asksFirstTime,
+        "com.apple.Safari": .notOpen,
+    ]
 
     public static func make() -> AppContext {
-        let rulesStore = TemporaryRulesStore.make()
         let rules = sampleRules()
+        return make(keyboards: SampleKeyboards.both, rules: rules, browserPermissions: sampleBrowserPermissions)
+    }
+
+    public static func make(keyboards: [Keyboard], rules: RulesFile, browserPermissions: [String: BrowserPermission]) -> AppContext {
+        let rulesStore = TemporaryRulesStore.make()
         try? rulesStore.save(rules)
 
-        let keyboardSystem = FakeKeyboardSystem(currentID: SampleKeyboards.canadian.id)
-        let browsers = FakeBrowsers(permissions: [
-            "com.google.Chrome": .allowed,
-            "com.brave.Browser": .asksFirstTime,
-            "com.apple.Safari": .notOpen,
-        ])
+        let firstKeyboardID = keyboards.first?.id
+        let keyboardSystem = FakeKeyboardSystem(keyboards: keyboards, currentID: firstKeyboardID)
+        let browsers = FakeBrowsers(permissions: browserPermissions)
         let bubble = RecordingBubble()
         let loginItem = FakeLoginItem(isEnabled: true)
         let services = AppServices.fake(

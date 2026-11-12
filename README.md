@@ -5,8 +5,8 @@
 <h1 align="center">Keyboard Switcher</h1>
 
 <p align="center">
-  <strong>The right keyboard in every app and on every website. Automatically.</strong><br>
-  A tiny, native menu bar app for people who type in more than one language on a Mac.
+  <strong>The right keyboard in every app. Automatically.</strong><br>
+  A tiny Mac menu bar app for people who type in more than one language.
 </p>
 
 <p align="center">
@@ -17,40 +17,92 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/hero.png" width="880" alt="WhatsApp gets Canadian – CSA, VS Code and claude.ai in Chrome get Canadian, and the menu bar badge follows">
+  <img src="docs/images/hero.png" width="880" alt="Teams gets Spanish, WhatsApp gets French, VS Code gets English and Claude Code gets Russian, and the menu bar badge follows">
 </p>
 
-## Sound familiar?
+## What it does
 
-- You reply on WhatsApp in French, but the Mac is still on the English keyboard, so every `é` comes out as `/`.
-- You jump back to your code editor and your brackets and slashes turn into accents.
-- You press 🌐 or Control-Space dozens of times a day, and still type the first word wrong.
+- 🪄 **Per app**: Teams in Spanish, WhatsApp in French, VS Code in English, Claude Code in Russian.
+- 🌍 **Per website**: `teams.microsoft.com` or `claude.ai` get their own keyboard in Chrome, Brave and Safari.
+- 🗣️ **Every language**: 151 languages and 285 keyboards, Japanese, Chinese and Korean included.
+- 🧠 **Remembers**: every app and website comes back on the last keyboard you picked in it.
+- 🍎 **Looks native**: the menu bar badge is drawn by macOS itself, pixel for pixel.
+- 🔒 **Private**: no network, no account, no analytics.
+- 🪶 **Tiny**: native Swift, zero dependencies, opens at login.
 
-Keyboard Switcher remembers which keyboard belongs where.
-The moment an app or a browser tab comes to the front, the right keyboard is already on.
+## Set it once
 
-## Features
+<table>
+  <tr>
+    <th>Apps</th>
+    <th>Websites</th>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/images/settings-apps.png" width="420" alt="Apps tab: Microsoft Teams on Spanish, WhatsApp on French, Visual Studio Code on U.S., Claude on Russian"></td>
+    <td valign="top"><img src="docs/images/settings-websites.png" width="420" alt="Websites tab: teams.microsoft.com on Spanish, web.whatsapp.com on French, claude.ai on Russian, and the browsers' permission status"></td>
+  </tr>
+</table>
 
-- **Per app.** WhatsApp in French, VS Code in English, Ghostty in English. Set it once, forget it.
-- **Per website.** claude.ai in English and web.whatsapp.com in French, in Chrome, Brave and Safari. The most precise rule wins: a rule for `mail.google.com` beats one for `google.com`.
-- **Remembers the rest.** Apps without a rule come back on the last keyboard you used in them.
-- **Respects your hands.** Switch by hand and the app either goes back to the rule next time, or makes your pick the new rule. Your choice.
-- **Looks like it came with your Mac.** The menu bar badge is drawn by macOS itself, so it matches the Mac's own input menu pixel for pixel: CA filled, CSA outlined, same size, same font.
-- **A quiet heads-up.** A small bubble next to your pointer tells you which keyboard just turned on.
-- **Private by design.** No network code, no analytics, no account. Your rules are one small JSON file on your Mac.
-- **Tiny and native.** About 3,400 lines of Swift, zero dependencies, no Electron. Opens at login and stays out of the way.
+Or click the badge in the menu bar to set the app or website you're on.
 
-## A look inside
+## 151 languages
 
-| Apps | Websites |
-| :---: | :---: |
-| <img src="docs/images/settings-apps.png" width="420" alt="Apps tab: WhatsApp on Canadian – CSA, Visual Studio Code and Ghostty on Canadian"> | <img src="docs/images/settings-websites.png" width="420" alt="Websites tab: claude.ai on Canadian, web.whatsapp.com on Canadian – CSA, and the browsers' permission status"> |
+🇺🇸 🇪🇸 🇫🇷 🇷🇺 🇩🇪 🇮🇹 🇧🇷 🇯🇵 🇨🇳 🇰🇷 🇪🇬 🇮🇱 🇬🇷 🇮🇳 🇺🇦 🇹🇷 🇻🇳 🇹🇭 🇮🇷 🇵🇱 and 131 more.
 
-Click the badge in the menu bar to change the rule for the app or website you're on, without opening Settings.
+<details>
+<summary><strong>See all 151 languages</strong></summary>
+
+<br>
+
+Every keyboard in System Settings › Keyboard › Input Sources works.
+🌐 marks languages spoken across borders, where no single flag fits.
+
+|   |   |   |   |
+| :--- | :--- | :--- | :--- |
+| 🇯🇵 Ainu | 🇬🇭 Akan | 🇦🇱 Albanian | 🇪🇹 Amharic |
+| 🇺🇸 Apache, Western | 🇪🇬 Arabic | 🇦🇲 Armenian | 🇮🇳 Assamese |
+| 🌐 Assyrian | 🇦🇿 Azerbaijani | 🇧🇩 Bangla | 🇧🇾 Belarusian |
+| 🇮🇳 Bodo | 🇧🇬 Bulgarian | 🇲🇲 Burmese | 🇭🇰 Cantonese, Traditional |
+| 🇺🇸 Cherokee | 🇺🇸 Chickasaw | 🇨🇳 Chinese, Simplified | 🇹🇼 Chinese, Traditional |
+| 🇺🇸 Chochenyo | 🇺🇸 Choctaw | 🇷🇺 Chuvash | 🇺🇸 Comanche |
+| 🇭🇷 Croatian | 🇨🇿 Czech | 🇩🇰 Danish | 🇲🇻 Dhivehi |
+| 🇮🇳 Dogri | 🇳🇱 Dutch | 🇧🇹 Dzongkha | 🇺🇸 English |
+| 🇪🇪 Estonian | 🇫🇴 Faroese | 🇵🇭 Filipino (Baybayin) | 🇫🇮 Finnish |
+| 🇫🇷 French | 🇬🇳 Fula (Adlam) | 🇬🇪 Georgian | 🇩🇪 German |
+| 🇬🇷 Greek | 🇬🇵 Guadeloupean Creole | 🇵🇾 Guarani | 🇮🇳 Gujarati |
+| 🇭🇹 Haitian Creole | 🇳🇬 Hausa | 🇺🇸 Hawaiian | 🇮🇱 Hebrew |
+| 🇮🇳 Hindi | 🌐 Hmong (Pahawh) | 🇭🇺 Hungarian | 🇮🇸 Icelandic |
+| 🇳🇬 Igbo | 🇫🇮 Inari Sami | 🇷🇺 Ingush | 🇨🇦 Inuktitut |
+| 🇮🇪 Irish | 🇮🇹 Italian | 🇯🇵 Japanese | 🇩🇿 Kabyle |
+| 🇧🇷 Kaingang | 🇮🇳 Kannada | 🇮🇳 Kashmiri (Devanagari) | 🇰🇿 Kazakh |
+| 🇰🇭 Khmer | 🇷🇺 Kildin Sámi | 🇺🇸 Kiowa | 🇮🇳 Konkani |
+| 🇰🇷 Korean | 🌐 Kurdish | 🌐 Kurdish, Sorani | 🇰🇬 Kyrgyz |
+| 🇱🇦 Lao | 🇱🇻 Latvian | 🇱🇹 Lithuanian | 🇸🇪 Lule Sami |
+| 🇺🇸 Lushootseed | 🇲🇰 Macedonian | 🇮🇳 Maithili | 🇲🇾 Malay (Arabic) |
+| 🇮🇳 Malayalam | 🇲🇹 Maltese | 🇮🇶 Mandaic | 🇮🇳 Manipuri (Bangla) |
+| 🇮🇳 Manipuri (Meitei Mayek) | 🇳🇿 Māori | 🇮🇳 Marathi | 🇲🇶 Martinican Creole |
+| 🇨🇦 Mi’kmaw | 🇲🇳 Mongolian | 🇺🇸 Mvskoke | 🇬🇳 N’Ko |
+| 🇺🇸 Navajo | 🇳🇵 Nepali | 🇺🇸 Nez Perce | 🇧🇷 Nheengatu |
+| 🇳🇴 North Sámi | 🇳🇴 Norwegian Bokmål | 🇮🇳 Odia | 🇺🇸 Osage |
+| 🇦🇫 Pashto | 🇮🇷 Persian | 🇸🇪 Pite Sámi | 🇵🇱 Polish |
+| 🇧🇷 Portuguese | 🇮🇳 Punjabi | 🇮🇩 Rejang | 🌐 Rohingya |
+| 🇷🇴 Romanian | 🇷🇺 Russian | 🇷🇺 Sakha | 🇺🇸 Salish |
+| 🇼🇸 Samoan | 🇮🇳 Sanskrit | 🇮🇳 Santali (Devanagari) | 🇮🇳 Santali (Ol Chiki) |
+| 🇷🇸 Serbian | 🇷🇸 Serbian (Latin) | 🇵🇰 Sindhi | 🇮🇳 Sindhi (Devanagari) |
+| 🇱🇰 Sinhala | 🇫🇮 Skolt Sami | 🇸🇰 Slovak | 🇸🇮 Slovenian |
+| 🇸🇪 South Sámi | 🇪🇸 Spanish | 🇸🇪 Swedish | 🇹🇯 Tajik |
+| 🇲🇦 Tamazight, Standard Moroccan (Tifinagh) | 🇮🇳 Tamil | 🇮🇳 Telugu | 🇹🇭 Thai |
+| 🌐 Tibetan | 🇹🇴 Tongan | 🇨🇦 Tsuut’ina | 🇹🇷 Turkish |
+| 🇹🇲 Turkmen | 🇷🇺 Tuvinian | 🇺🇦 Ukrainian | 🇸🇪 Ume Sámi |
+| 🇵🇰 Urdu | 🌐 Uyghur | 🇦🇫 Uzbek (Arabic) | 🇺🇿 Uzbek (Cyrillic) |
+| 🇻🇳 Vietnamese | 🇮🇳 Wancho | 🏴󠁧󠁢󠁷󠁬󠁳󠁿 Welsh | 🇲🇽 Wixárika |
+| 🇨🇦 Wolastoqey | 🌐 Yiddish | 🇳🇬 Yoruba |   |
+
+Tested by hand: German, Russian, Arabic, Greek, Hebrew and Japanese.
+
+</details>
 
 ## Install
-
-You need macOS 14 Sonoma or later, and Xcode 26 or later (or its Command Line Tools).
 
 ```sh
 git clone https://github.com/anthonysarkis/keyboard-switcher.git
@@ -58,46 +110,64 @@ cd keyboard-switcher
 scripts/install.sh
 ```
 
-- The script builds the app, signs it, puts it in `~/Applications/Keyboard Switcher.app` and opens it.
-- To sign with your own certificate, run `SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/install.sh`.
-- Without a certificate it signs the app "ad hoc": it works the same, but macOS asks again for browser access after each rebuild.
-- The first time a website rule meets a browser, macOS asks "Keyboard Switcher wants access to control …". Click Allow: that is how the app reads the address of the current tab, and nothing more.
+Needs macOS 14 or later and Xcode 26 (or its Command Line Tools).
+When macOS asks to let it control your browser, click **Allow**: that is how it reads the tab's address.
 
-To uninstall: badge › Quit Keyboard Switcher, delete the app, and delete `~/Library/Application Support/com.anthonysarkis.keyboard-switcher`.
+<details>
+<summary><strong>Signing and uninstalling</strong></summary>
 
-## How it works
+<br>
 
-1. `NSWorkspace` tells the app which app just came to the front.
-2. In a browser, Apple Events read the address of the current tab, twice a second, and only while you have a website rule.
-3. The rules decide, in this order: the website rule, then the app's rule, then the last keyboard used in that app.
+- Your own certificate: `SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/install.sh`.
+- No certificate: the app is signed "ad hoc" and works the same, but macOS asks for browser access again after each rebuild.
+- Uninstall: badge › Quit Keyboard Switcher, delete `~/Applications/Keyboard Switcher.app` and `~/Library/Application Support/com.anthonysarkis.keyboard-switcher`.
+
+</details>
+
+<details>
+<summary><strong>How it works</strong></summary>
+
+<br>
+
+1. `NSWorkspace` says which app came to the front.
+2. In a browser, Apple Events read the tab's address twice a second, only while you have a website rule.
+3. The website rule wins, then the app's rule, then the last keyboard used in that app.
 4. `TISSelectInputSource` switches the keyboard.
-   Right after a switch, macOS sometimes puts the previous keyboard back; the app waits 600 ms and switches again if it did.
-5. The badge comes from `KLInputSourceIconManager`, the macOS class behind the Mac's own input menu.
-   It is a private API: if a macOS update removes it, the app draws the same badge itself.
+5. The badge comes from `KLInputSourceIconManager`, the class behind the Mac's own input menu; if a macOS update removes it, the app draws the same badge itself.
 
-- Rules live in `~/Library/Application Support/com.anthonysarkis.keyboard-switcher/rules.json`.
-- "Open at login" uses Login Items; "Show the Mac's own keyboard icon" flips macOS's own "Show Input menu in menu bar".
+Rules live in one small JSON file: `~/Library/Application Support/com.anthonysarkis.keyboard-switcher/rules.json`.
 
-## Questions
+</details>
 
-**Does it work with Firefox?**
-App rules do.
-Website rules don't yet: Firefox doesn't share the current tab's address with other apps.
+<details>
+<summary><strong>Questions</strong></summary>
 
-**Does it need Accessibility or Screen Recording access?**
+<br>
+
+**Firefox?**
+App rules work.
+Website rules don't: Firefox doesn't share the tab's address with other apps.
+
+**Accessibility or Screen Recording access?**
 No.
-The only thing it ever asks for is permission to read the current tab, browser by browser, and only once you add a website rule.
+It only asks to read the current tab, browser by browser, once you add a website rule.
 
 **Will it fight me when I switch by hand?**
 No.
-It notices the difference between its own switches and yours, and Settings › General decides what happens next.
+It remembers your pick: that app or website gets it back next time.
+Turn off "Remember keyboard changes you make yourself" in Settings › General, and only your rules switch the keyboard.
 
-## Develop
+</details>
+
+<details>
+<summary><strong>Develop</strong></summary>
+
+<br>
 
 - `swift test`: the rules and the switching engine, with stand-ins for macOS.
-- `swift run keyboard-switcher-dev keyboards`: the keyboards turned on in macOS.
-- `swift run keyboard-switcher-dev switch-test`: switches to another keyboard and back.
-- `swift run keyboard-switcher-dev badges`: checks that macOS draws the badges, and how close the app's own drawing comes.
-- `swift run keyboard-switcher-dev snapshots <folder>`: draws the Settings tabs, the badges and the bubbles as PNG files.
-- `swift run keyboard-switcher-dev readme-images`: redraws the pictures in this README into `docs/images`.
-- Logs: `/usr/bin/log show --last 10m --predicate 'subsystem == "com.anthonysarkis.keyboard-switcher" AND process == "KeyboardSwitcher"'` (in zsh, plain `log` is a different command).
+- `swift run keyboard-switcher-dev keyboards | switch-test | badges | snapshots <folder>`: live checks.
+- `swift run keyboard-switcher-dev readme-images`: redraws the pictures in this README.
+- `swift run keyboard-switcher-dev languages`: prints the language table, straight from macOS.
+- Logs: `/usr/bin/log show --last 10m --predicate 'subsystem == "com.anthonysarkis.keyboard-switcher" AND process == "KeyboardSwitcher"'`.
+
+</details>

@@ -2,8 +2,8 @@ import AppKit
 import SwiftUI
 
 struct ReadmeHero: View {
-    private static let width: CGFloat = 880
-    private static let height: CGFloat = 450
+    private static let width: CGFloat = 1080
+    private static let height: CGFloat = 460
     private static let headlineFont = Font.system(size: 36, weight: .bold)
     private static let subheadlineFont = Font.system(size: 17, weight: .medium)
     private static let subheadlineColor = Color.white.opacity(0.85)
@@ -31,7 +31,7 @@ struct ReadmeHero: View {
                 .foregroundStyle(Self.subheadlineColor)
                 .padding(.top, 6)
             Spacer(minLength: 0)
-            HStack(alignment: .top, spacing: 24) {
+            HStack(alignment: .top, spacing: 20) {
                 ForEach(apps) { app in
                     card(for: app)
                 }
@@ -45,7 +45,7 @@ struct ReadmeHero: View {
     @ViewBuilder
     private var menuBar: some View {
         if let frontApp = apps.first, let badgeImage = badgeImages[frontApp.keyboard.id] {
-            ReadmeHeroMenuBar(frontAppName: frontApp.caption, badgeImage: badgeImage, clockText: Self.clockText)
+            ReadmeHeroMenuBar(frontAppName: frontApp.appName, badgeImage: badgeImage, clockText: Self.clockText)
         }
     }
 

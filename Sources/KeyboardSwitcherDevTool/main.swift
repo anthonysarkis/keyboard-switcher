@@ -10,6 +10,8 @@ case "keyboards":
 case "switch-test":
     let passed = KeyboardChecks.switchAndRestore()
     exit(passed ? 0 : 1)
+case "languages":
+    LanguagesCommand.printMarkdownTable()
 case "badges":
     let macDrawsTheBadges = BadgeCheck.compareMacAndDrawnBadges()
     exit(macDrawsTheBadges ? 0 : 1)

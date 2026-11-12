@@ -3,7 +3,7 @@ import SwiftUI
 import KeyboardSwitcherKit
 
 struct ReadmeHeroAppCard: View {
-    private static let width: CGFloat = 240
+    private static let width: CGFloat = 228
     private static let iconSize: CGFloat = 64
     private static let captionFont = Font.system(size: 15, weight: .semibold)
     private static let captionColor = Color.black.opacity(0.85)

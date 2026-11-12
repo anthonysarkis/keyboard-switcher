@@ -3,10 +3,12 @@ import SwiftUI
 struct AppIconView: View {
     private static let size: CGFloat = 24
 
+    @Environment(\.appIconOverrides) private var appIconOverrides
+
     let bundleIdentifier: String
 
     var body: some View {
-        let icon = InstalledApps.icon(for: bundleIdentifier)
+        let icon = appIconOverrides[bundleIdentifier] ?? InstalledApps.icon(for: bundleIdentifier)
 
         Image(nsImage: icon)
             .resizable()

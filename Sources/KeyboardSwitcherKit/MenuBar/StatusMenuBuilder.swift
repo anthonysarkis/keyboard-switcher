@@ -88,7 +88,7 @@ final class StatusMenuBuilder {
                 ruleBook.setAppRule(bundleIdentifier: frontApp.bundleIdentifier, appName: frontApp.name, keyboardID: keyboard.id)
             }
         }
-        let noRuleTitle = ruleBook.rules.preferences.otherApps.title
+        let noRuleTitle = ruleBook.rules.preferences.noRuleTitle
         let noRuleItem = MenuItemFactory.actionItem(noRuleTitle, isChecked: appRule == nil) { [ruleBook] in
             ruleBook.removeAppRule(bundleIdentifier: frontApp.bundleIdentifier)
         }

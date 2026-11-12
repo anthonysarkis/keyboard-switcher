@@ -10,7 +10,12 @@
 - Install and relaunch: `scripts/install.sh` → `~/Applications/Keyboard Switcher.app`
 - Dev checks: `swift run keyboard-switcher-dev keyboards | switch-test | badges | snapshots <folder>`
 - Check UI changes with `snapshots`, then read the PNGs.
-- README pictures: `swift run keyboard-switcher-dev readme-images` redraws `docs/images` (hero + Settings tabs); `docs/images/icon.png` is `build/AppIcon.iconset/icon_256x256@2x.png`.
+- README pictures: `swift run keyboard-switcher-dev readme-images` redraws `docs/images` (hero + Settings tabs).
+  - The example (Teams in Spanish, WhatsApp in French, VS Code in English, Claude Code in Russian) lives in `ReadmeExample`.
+  - App icons come from `docs/app-icons`, not this Mac, so the pictures look the same on any Mac; the Apps tab gets them through `appIconOverrides`.
+  - `docs/images/icon.png` is `build/AppIcon.iconset/icon_256x256@2x.png`.
+- README language table: `swift run keyboard-switcher-dev languages` prints it from macOS; paste it over the table in README.md.
+  - Each language gets its likely country's flag; languages spoken across borders (Kurdish, Uyghur, Tibetan, Rohingya…) keep 🌐 on purpose.
 
 ## Conventions
 
@@ -37,6 +42,7 @@
 - New kind of rule: a `KeyboardRuleSource` in `Resolution/`, listed in `RuleResolver.standard` at its priority.
 - New browser: one line in `SupportedBrowser.all`; its family picks the AppleScript.
 - New settings tab: a view in `Settings/`, listed in `SettingsWindowController.tabs`.
+- New setting: a row in General's one list (one `Section`, never groups); an on/off choice is a switch, and if its effect isn't obvious, a second `Text` in its label says what happens, one sentence per line.
 - New macOS connection: a protocol plus a live class in `AppServices.live`, and a fake in `KeyboardSwitcherFakes`.
 
 ## Gotchas

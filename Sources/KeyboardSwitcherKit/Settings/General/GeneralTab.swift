@@ -14,18 +14,11 @@ public struct GeneralTab: View {
         Form {
             Section {
                 Toggle("Open at login", isOn: launchAtLoginBinding)
-            }
-
-            Section {
                 Toggle("Show a bubble when it switches", isOn: bubbleBinding)
                 Toggle("Show the Mac's own keyboard icon", isOn: macKeyboardIconBinding)
-            }
-
-            Section {
-                Picker("If I switch by hand", selection: manualSwitchBinding) {
-                    ForEach(ManualSwitchBehavior.allCases, id: \.self) { behavior in
-                        Text(behavior.title).tag(behavior)
-                    }
+                Toggle(isOn: remembersManualSwitchesBinding) {
+                    Text("Remember keyboard changes you make yourself")
+                    Text("Switch with Control-Space or \(globeKey), and that app or website gets it back next time.\nWhen off, the keyboard changes only for apps and websites in your list.")
                 }
             }
         }
@@ -55,10 +48,16 @@ public struct GeneralTab: View {
         )
     }
 
-    private var manualSwitchBinding: Binding<ManualSwitchBehavior> {
+    private var globeKey: Image {
+        Image(systemName: "globe")
+    }
+
+    private var remembersManualSwitchesBinding: Binding<Bool> {
         Binding(
-            get: { ruleBook.rules.preferences.manualSwitch },
-            set: { behavior in ruleBook.updatePreferences { preferences in preferences.manualSwitch = behavior } }
+            get: { ruleBook.rules.preferences.remembersManualSwitches },
+            set: { remembers in
+                ruleBook.updatePreferences { preferences in preferences.remembersManualSwitches = remembers }
+            }
         )
     }
 }

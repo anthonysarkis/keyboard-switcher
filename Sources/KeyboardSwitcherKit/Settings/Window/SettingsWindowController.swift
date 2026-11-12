@@ -39,6 +39,7 @@ final class SettingsWindowController: NSWindowController {
 
     private static func tabItem(label: String, symbolName: String, content: some View) -> NSTabViewItem {
         let hostingController = NSHostingController(rootView: content)
+        hostingController.title = label
         hostingController.sizingOptions = [.preferredContentSize]
         let tabItem = NSTabViewItem(viewController: hostingController)
         tabItem.label = label

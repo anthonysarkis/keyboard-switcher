@@ -1,14 +1,15 @@
-import Foundation
+import AppKit
 import KeyboardSwitcherKit
 
 enum SettingsTabSnapshots {
-    static func writeAppsTab(of context: AppContext, in folder: URL) throws {
+    static func writeAppsTab(of context: AppContext, in folder: URL, appIcons: [String: NSImage] = [:]) throws {
         let appsTab = AppsTab(
             ruleBook: context.ruleBook,
             catalog: context.catalog,
             ownBundleIdentifier: context.coordinator.ownBundleIdentifier
         )
-        try ViewSnapshotter.write(appsTab, named: "settings-apps", in: folder)
+        let appsTabWithIcons = appsTab.environment(\.appIconOverrides, appIcons)
+        try ViewSnapshotter.write(appsTabWithIcons, named: "settings-apps", in: folder)
     }
 
     static func writeWebsitesTab(of context: AppContext, in folder: URL) throws {

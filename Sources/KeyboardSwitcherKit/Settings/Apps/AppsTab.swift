@@ -28,22 +28,7 @@ public struct AppsTab: View {
                     AddAppButton(ruleBook: ruleBook, catalog: catalog, ownBundleIdentifier: ownBundleIdentifier)
                 }
             }
-
-            Section {
-                Picker("Every other app", selection: otherAppsBinding) {
-                    ForEach(OtherAppsBehavior.allCases, id: \.self) { behavior in
-                        Text(behavior.title).tag(behavior)
-                    }
-                }
-            }
         }
         .settingsTabFrame()
-    }
-
-    private var otherAppsBinding: Binding<OtherAppsBehavior> {
-        Binding(
-            get: { ruleBook.rules.preferences.otherApps },
-            set: { behavior in ruleBook.updatePreferences { preferences in preferences.otherApps = behavior } }
-        )
     }
 }
