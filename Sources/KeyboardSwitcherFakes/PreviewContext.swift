@@ -2,7 +2,6 @@ import KeyboardSwitcherCore
 import KeyboardSwitcherKit
 
 public enum PreviewContext {
-    private static let ghostty = AppIdentity(bundleIdentifier: "com.mitchellh.ghostty", name: "Ghostty")
     private static let sampleBrowserPermissions: [String: BrowserPermission] = [
         "com.google.Chrome": .allowed,
         "com.brave.Browser": .asksFirstTime,
@@ -32,7 +31,7 @@ public enum PreviewContext {
         )
 
         let context = AppContext(services: services)
-        context.coordinator.start(frontApp: ghostty)
+        context.coordinator.start(frontApp: nil)
         context.tabTracker.refreshPermissions()
         return context
     }

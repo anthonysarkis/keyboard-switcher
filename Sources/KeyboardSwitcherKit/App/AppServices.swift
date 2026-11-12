@@ -13,6 +13,7 @@ public struct AppServices {
     public var loginItem: any LoginItemControlling
     public var macKeyboardIcon: any MacKeyboardIconControlling
     public var rulesStore: RulesStore
+    public var installedAppName: (String) -> String?
     public var ownBundleIdentifier: String
     public var settleDuration: Duration
     public var browserCheckInterval: TimeInterval
@@ -26,6 +27,7 @@ public struct AppServices {
         loginItem: any LoginItemControlling,
         macKeyboardIcon: any MacKeyboardIconControlling,
         rulesStore: RulesStore,
+        installedAppName: @escaping (String) -> String?,
         ownBundleIdentifier: String,
         settleDuration: Duration,
         browserCheckInterval: TimeInterval
@@ -38,6 +40,7 @@ public struct AppServices {
         self.loginItem = loginItem
         self.macKeyboardIcon = macKeyboardIcon
         self.rulesStore = rulesStore
+        self.installedAppName = installedAppName
         self.ownBundleIdentifier = ownBundleIdentifier
         self.settleDuration = settleDuration
         self.browserCheckInterval = browserCheckInterval
@@ -62,6 +65,7 @@ public struct AppServices {
             loginItem: loginItem,
             macKeyboardIcon: macKeyboardIcon,
             rulesStore: rulesStore,
+            installedAppName: { bundleIdentifier in InstalledApps.name(for: bundleIdentifier) },
             ownBundleIdentifier: bundleIdentifier,
             settleDuration: macOSSettleDuration,
             browserCheckInterval: browserTabCheckInterval

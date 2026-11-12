@@ -77,10 +77,12 @@ public final class SwitchCoordinator {
     }
 
     private func rememberKeyboardWhenNothingApplies() {
-        guard let context = currentContext, ruleDecision(for: context) == nil else { return }
+        guard let frontApp = frontAppOtherThanOurs, frontApp.isRegularApp,
+              let context = currentContext, ruleDecision(for: context) == nil
+        else { return }
         let enteredKeyboardID = manualSwitchDetector.settlingKeyboardID ?? catalog.readCurrentKeyboardID()
         guard let enteredKeyboardID else { return }
-        ruleBook.rememberKeyboardOnEntry(keyboardID: enteredKeyboardID, in: context)
+        ruleBook.rememberKeyboardOnEntry(keyboardID: enteredKeyboardID, appName: frontApp.name, in: context)
     }
 
     private func ruleDecision(for context: SwitchContext) -> KeyboardDecision? {
@@ -95,11 +97,12 @@ public final class SwitchCoordinator {
     private func keyboardSelectionDidChange() {
         guard let selectedKeyboardID = catalog.readCurrentKeyboardID(),
               manualSwitchDetector.isManualChange(to: selectedKeyboardID),
+              let frontApp = frontAppOtherThanOurs,
               let context = currentContext
         else { return }
 
         Log.switching.notice("Switched by hand to \(selectedKeyboardID, privacy: .public) in \(context.bundleIdentifier, privacy: .public)")
-        ruleBook.recordManualSwitch(keyboardID: selectedKeyboardID, in: context)
+        ruleBook.recordManualSwitch(keyboardID: selectedKeyboardID, appName: frontApp.name, in: context)
     }
 
     private func applyRules(showsBubble: Bool) {

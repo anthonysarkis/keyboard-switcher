@@ -1,13 +1,14 @@
 import AppKit
 
 extension AppIdentity {
-    init?(bundleIdentifier: String?, localizedName: String?) {
+    init?(bundleIdentifier: String?, localizedName: String?, isRegularApp: Bool) {
         guard let bundleIdentifier else { return nil }
-        self.init(bundleIdentifier: bundleIdentifier, name: localizedName ?? bundleIdentifier)
+        self.init(bundleIdentifier: bundleIdentifier, name: localizedName ?? bundleIdentifier, isRegularApp: isRegularApp)
     }
 
     init?(application: NSRunningApplication) {
-        self.init(bundleIdentifier: application.bundleIdentifier, localizedName: application.localizedName)
+        let isRegularApp = application.activationPolicy == .regular
+        self.init(bundleIdentifier: application.bundleIdentifier, localizedName: application.localizedName, isRegularApp: isRegularApp)
     }
 
     init?(applicationURL: URL) {

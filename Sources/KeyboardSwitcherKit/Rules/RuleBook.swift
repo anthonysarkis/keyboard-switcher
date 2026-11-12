@@ -8,9 +8,11 @@ public final class RuleBook {
     @ObservationIgnored var onEdit: (@MainActor () -> Void)?
 
     private let store: RulesStore
+    private let installedAppName: (String) -> String?
 
-    public init(store: RulesStore) {
+    public init(store: RulesStore, installedAppName: @escaping (String) -> String?) {
         self.store = store
+        self.installedAppName = installedAppName
     }
 
     public var hasWebsiteRules: Bool {
@@ -50,6 +52,7 @@ public final class RuleBook {
         do {
             if let savedRules = try store.load() {
                 rules = savedRules
+                moveRememberedAppsIntoTheList()
             } else {
                 startedWithoutRulesFile = true
                 rules = RulesFile()
@@ -63,12 +66,17 @@ public final class RuleBook {
         }
     }
 
-    func recordManualSwitch(keyboardID: String, in context: SwitchContext) {
-        apply { editedRules in ManualSwitchPolicy.record(keyboardID: keyboardID, in: context, rules: &editedRules) }
+    func recordManualSwitch(keyboardID: String, appName: String, in context: SwitchContext) {
+        apply { editedRules in ManualSwitchPolicy.record(keyboardID: keyboardID, appName: appName, in: context, rules: &editedRules) }
     }
 
-    func rememberKeyboardOnEntry(keyboardID: String, in context: SwitchContext) {
-        apply { editedRules in AppEntryPolicy.record(keyboardID: keyboardID, in: context, rules: &editedRules) }
+    func rememberKeyboardOnEntry(keyboardID: String, appName: String, in context: SwitchContext) {
+        apply { editedRules in AppEntryPolicy.record(keyboardID: keyboardID, appName: appName, in: context, rules: &editedRules) }
+    }
+
+    private func moveRememberedAppsIntoTheList() {
+        guard !rules.lastUsedByApp.isEmpty else { return }
+        apply { editedRules in editedRules.moveRememberedAppsIntoTheList(appNameFor: installedAppName) }
     }
 
     private func edit(_ change: (inout RulesFile) -> Void) {

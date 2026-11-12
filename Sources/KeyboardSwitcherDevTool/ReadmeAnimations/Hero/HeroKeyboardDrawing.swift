@@ -9,8 +9,8 @@ enum HeroKeyboardDrawing {
     private static let waveEnd = 0.27
     private static let waveLift = 5.0
     private static let waveExit = 0.08
-    private static let waveSpread = 0.36
-    private static let waveRowDelay = 0.035
+    private static let waveSpread = 0.28
+    private static let waveRowDelay = 0.028
     private static let pressDepth = 1.4
     private static let pressFadeOut = 0.05
     private static let pressRise = 0.04

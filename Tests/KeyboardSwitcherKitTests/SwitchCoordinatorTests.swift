@@ -79,7 +79,7 @@ struct SwitchCoordinatorTests {
         #expect(harness.ruleBook.rules == rules)
     }
 
-    @Test func appOutsideTheListKeepsTheKeyboardItWasFirstOpenedWith() async throws {
+    @Test func appOutsideTheListJoinsItWithTheKeyboardItWasOpenedWith() async throws {
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: TestHarness.sampleRules())
         harness.coordinator.start(frontApp: TestHarness.whatsApp)
         await harness.waitForMacOSToSettle()
@@ -88,9 +88,20 @@ struct SwitchCoordinatorTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.ghostty)
         harness.coordinator.frontAppDidChange(to: TestHarness.notes)
 
-        #expect(harness.ruleBook.rules.lastUsedByApp[TestHarness.notes.bundleIdentifier] == canadianCSA)
+        let notesRule = AppRule(bundleIdentifier: TestHarness.notes.bundleIdentifier, appName: "Notes", keyboardID: canadianCSA)
+        #expect(harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier) == notesRule)
         #expect(harness.keyboardSystem.currentID == canadianCSA)
-        #expect(try harness.rulesStore.load()?.lastUsedByApp[TestHarness.notes.bundleIdentifier] == canadianCSA)
+        #expect(try harness.rulesStore.load()?.appRule(for: TestHarness.notes.bundleIdentifier) == notesRule)
+    }
+
+    @Test func backgroundWindowsNeverJoinTheList() throws {
+        let passwordDialog = AppIdentity(bundleIdentifier: "com.apple.SecurityAgent", name: "SecurityAgent", isRegularApp: false)
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: TestHarness.sampleRules())
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.coordinator.frontAppDidChange(to: passwordDialog)
+
+        #expect(harness.ruleBook.rules == TestHarness.sampleRules())
     }
 
     @Test func appOpenedWhileMacOSPutsBackTheOldKeyboardKeepsTheNewOne() async throws {
@@ -102,7 +113,7 @@ struct SwitchCoordinatorTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.notes)
         await harness.waitForMacOSToSettle()
 
-        #expect(harness.ruleBook.rules.lastUsedByApp[TestHarness.notes.bundleIdentifier] == canadianCSA)
+        #expect(harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier)?.keyboardID == canadianCSA)
         #expect(harness.keyboardSystem.currentID == canadianCSA)
     }
 
@@ -114,7 +125,7 @@ struct SwitchCoordinatorTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.ghostty)
         harness.coordinator.frontAppDidChange(to: TestHarness.notes)
 
-        #expect(harness.ruleBook.rules.lastUsedByApp[TestHarness.notes.bundleIdentifier] == canadianCSA)
+        #expect(harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier)?.keyboardID == canadianCSA)
         #expect(harness.keyboardSystem.currentID == canadianCSA)
     }
 
@@ -128,7 +139,7 @@ struct SwitchCoordinatorTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.ghostty)
         harness.coordinator.frontAppDidChange(to: TestHarness.notes)
 
-        #expect(harness.ruleBook.rules.lastUsedByApp.isEmpty)
+        #expect(harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier) == nil)
         #expect(harness.keyboardSystem.currentID == canadian)
     }
 
@@ -181,6 +192,6 @@ struct SwitchCoordinatorTests {
         harness.keyboardSystem.switchByHand(to: canadian)
 
         #expect(harness.keyboardSystem.selections == selectionsBefore)
-        #expect(harness.ruleBook.rules.lastUsedByApp.isEmpty)
+        #expect(harness.ruleBook.rules == TestHarness.sampleRules())
     }
 }

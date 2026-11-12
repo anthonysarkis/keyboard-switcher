@@ -17,9 +17,17 @@ struct ManualSwitchPolicyTests {
     @Test func rememberingUpdatesTheAppRule() {
         var rules = rules(remembersManualSwitches: true)
 
-        ManualSwitchPolicy.record(keyboardID: canadian, in: whatsAppContext, rules: &rules)
+        ManualSwitchPolicy.record(keyboardID: canadian, appName: "WhatsApp", in: whatsAppContext, rules: &rules)
 
         #expect(rules.appRule(for: whatsAppContext.bundleIdentifier)?.keyboardID == canadian)
+    }
+
+    @Test func anAppInTheListKeepsTheNameItHasThere() {
+        var rules = rules(remembersManualSwitches: true)
+
+        ManualSwitchPolicy.record(keyboardID: canadian, appName: "WhatsApp Beta", in: whatsAppContext, rules: &rules)
+
+        #expect(rules.appRule(for: whatsAppContext.bundleIdentifier)?.appName == "WhatsApp")
     }
 
     @Test func rememberingUpdatesTheWebsiteRuleBeforeTheBrowserRule() {
@@ -27,20 +35,20 @@ struct ManualSwitchPolicyTests {
         rules.setAppRule(bundleIdentifier: "com.google.Chrome", appName: "Google Chrome", keyboardID: canadian)
         let claudeInChrome = SwitchContext(bundleIdentifier: "com.google.Chrome", website: "claude.ai")
 
-        ManualSwitchPolicy.record(keyboardID: canadianCSA, in: claudeInChrome, rules: &rules)
+        ManualSwitchPolicy.record(keyboardID: canadianCSA, appName: "Google Chrome", in: claudeInChrome, rules: &rules)
 
         let claudeRule = rules.websiteRules.first { websiteRule in websiteRule.website == "claude.ai" }
         #expect(claudeRule?.keyboardID == canadianCSA)
         #expect(rules.appRule(for: "com.google.Chrome")?.keyboardID == canadian)
     }
 
-    @Test func rememberingKeepsThePickForAnAppWithoutARule() {
+    @Test func aSwitchByHandAddsAnAppOutsideTheListToTheList() {
         var rules = rules(remembersManualSwitches: true)
 
-        ManualSwitchPolicy.record(keyboardID: canadianCSA, in: notesContext, rules: &rules)
+        ManualSwitchPolicy.record(keyboardID: canadianCSA, appName: "Notes", in: notesContext, rules: &rules)
 
-        #expect(rules.lastUsedByApp[notesContext.bundleIdentifier] == canadianCSA)
-        #expect(rules.appRule(for: notesContext.bundleIdentifier) == nil)
+        let notesRule = AppRule(bundleIdentifier: "com.apple.Notes", appName: "Notes", keyboardID: canadianCSA)
+        #expect(rules.appRule(for: notesContext.bundleIdentifier) == notesRule)
     }
 
     @Test(arguments: ["net.whatsapp.WhatsApp", "com.apple.Notes"])
@@ -49,7 +57,7 @@ struct ManualSwitchPolicyTests {
         let rulesBefore = rules
         let context = SwitchContext(bundleIdentifier: bundleIdentifier)
 
-        ManualSwitchPolicy.record(keyboardID: canadian, in: context, rules: &rules)
+        ManualSwitchPolicy.record(keyboardID: canadian, appName: "Some App", in: context, rules: &rules)
 
         #expect(rules == rulesBefore)
     }

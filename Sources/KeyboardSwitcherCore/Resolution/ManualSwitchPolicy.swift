@@ -1,5 +1,5 @@
 public enum ManualSwitchPolicy {
-    public static func record(keyboardID: String, in context: SwitchContext, rules: inout RulesFile) {
+    public static func record(keyboardID: String, appName: String, in context: SwitchContext, rules: inout RulesFile) {
         guard rules.preferences.remembersManualSwitches else { return }
 
         let websiteRule = context.website.flatMap { website in
@@ -8,10 +8,9 @@ public enum ManualSwitchPolicy {
 
         if let websiteRule {
             rules.setWebsiteRule(website: websiteRule.website, keyboardID: keyboardID)
-        } else if let appRule = rules.appRule(for: context.bundleIdentifier) {
-            rules.setAppRule(bundleIdentifier: appRule.bundleIdentifier, appName: appRule.appName, keyboardID: keyboardID)
         } else {
-            rules.lastUsedByApp[context.bundleIdentifier] = keyboardID
+            let listedName = rules.appRule(for: context.bundleIdentifier)?.appName ?? appName
+            rules.setAppRule(bundleIdentifier: context.bundleIdentifier, appName: listedName, keyboardID: keyboardID)
         }
     }
 }

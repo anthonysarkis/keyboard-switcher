@@ -16,14 +16,15 @@ public struct WebsitesTab: View {
     public var body: some View {
         Form {
             Section {
-                if ruleBook.rules.websiteRules.isEmpty {
+                let sortedWebsiteRules = ruleBook.rules.websiteRulesByAddress
+                if sortedWebsiteRules.isEmpty {
                     Text("No websites yet")
                         .foregroundStyle(.secondary)
                 }
-                ForEach(ruleBook.rules.websiteRules) { websiteRule in
+                ForEach(sortedWebsiteRules) { websiteRule in
                     WebsiteRuleRow(websiteRule: websiteRule, ruleBook: ruleBook, keyboards: catalog.keyboards)
                 }
-            } footer: {
+            } header: {
                 HStack {
                     Spacer()
                     Button("Add Website…") { isAddingWebsite = true }
@@ -36,7 +37,8 @@ public struct WebsitesTab: View {
                 }
             }
         }
-        .settingsTabFrame()
+        .animation(.snappy, value: ruleBook.rules.websiteRules)
+        .settingsListTabFrame()
         .sheet(isPresented: $isAddingWebsite) {
             AddWebsiteSheet(ruleBook: ruleBook, catalog: catalog, suggestedWebsite: tabTracker.currentWebsite)
         }

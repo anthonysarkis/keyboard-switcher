@@ -23,8 +23,9 @@ public final class FrontAppWatcher {
             let application = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
             let bundleIdentifier = application?.bundleIdentifier
             let localizedName = application?.localizedName
+            let isRegularApp = application?.activationPolicy == .regular
             MainActor.assumeIsolated {
-                let frontApp = AppIdentity(bundleIdentifier: bundleIdentifier, localizedName: localizedName)
+                let frontApp = AppIdentity(bundleIdentifier: bundleIdentifier, localizedName: localizedName, isRegularApp: isRegularApp)
                 onChange(frontApp)
             }
         }

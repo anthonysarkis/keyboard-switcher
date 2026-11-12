@@ -13,37 +13,30 @@ struct AppEntryPolicyTests {
         return RulesFile(appRules: [whatsAppRule], preferences: preferences)
     }
 
-    @Test func aNewAppKeepsTheKeyboardItWasOpenedWith() {
+    @Test func aNewAppJoinsTheListWithTheKeyboardItWasOpenedWith() {
         var rules = rules(remembersManualSwitches: true)
 
-        AppEntryPolicy.record(keyboardID: canadian, in: notesContext, rules: &rules)
+        AppEntryPolicy.record(keyboardID: canadian, appName: "Notes", in: notesContext, rules: &rules)
 
-        #expect(rules.lastUsedByApp[notesContext.bundleIdentifier] == canadian)
+        let notesRule = AppRule(bundleIdentifier: "com.apple.Notes", appName: "Notes", keyboardID: canadian)
+        #expect(rules.appRule(for: notesContext.bundleIdentifier) == notesRule)
     }
 
-    @Test func anAppThatAlreadyRemembersAKeyboardKeepsIt() {
+    @Test func anAppInTheListKeepsItsKeyboard() {
         var rules = rules(remembersManualSwitches: true)
-        rules.lastUsedByApp[notesContext.bundleIdentifier] = canadianCSA
+        let rulesBefore = rules
 
-        AppEntryPolicy.record(keyboardID: canadian, in: notesContext, rules: &rules)
+        AppEntryPolicy.record(keyboardID: canadian, appName: "WhatsApp", in: whatsAppContext, rules: &rules)
 
-        #expect(rules.lastUsedByApp[notesContext.bundleIdentifier] == canadianCSA)
+        #expect(rules == rulesBefore)
     }
 
-    @Test func anAppInTheListKeepsItsRule() {
-        var rules = rules(remembersManualSwitches: true)
-
-        AppEntryPolicy.record(keyboardID: canadian, in: whatsAppContext, rules: &rules)
-
-        #expect(rules.lastUsedByApp.isEmpty)
-        #expect(rules.appRule(for: whatsAppContext.bundleIdentifier)?.keyboardID == canadianCSA)
-    }
-
-    @Test func nothingIsRememberedWhenRememberingIsOff() {
+    @Test func nothingJoinsTheListWhenRememberingIsOff() {
         var rules = rules(remembersManualSwitches: false)
+        let rulesBefore = rules
 
-        AppEntryPolicy.record(keyboardID: canadian, in: notesContext, rules: &rules)
+        AppEntryPolicy.record(keyboardID: canadian, appName: "Notes", in: notesContext, rules: &rules)
 
-        #expect(rules.lastUsedByApp.isEmpty)
+        #expect(rules == rulesBefore)
     }
 }

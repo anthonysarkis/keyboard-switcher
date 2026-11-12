@@ -73,4 +73,8 @@
 - If a macOS update removes that drawer, `DrawnBadgeImages` takes over with the measured look: 22 × 16 pt, 5 pt corners, SF semibold 11 pt, narrowed (wdth 65, opsz 16) when the letters don't fit.
 - `swift run keyboard-switcher-dev badges` says whether macOS still draws them and how far the fallback is (CSA identical, CA about 0.1 pt to the left).
 - New users start with an empty list. `SampleRules` in `KeyboardSwitcherFakes` (WhatsApp, VS Code, Ghostty) is test and preview data only: never ship it as a starting list.
-- An app outside the list remembers the keyboard it had when it first comes to the front (`AppEntryPolicy`, only while remembering is on). During a switch's settle window that is the keyboard being switched to, not the one macOS briefly puts back.
+- An app outside the list joins it with the keyboard it had when it first comes to the front (`AppEntryPolicy`: regular apps only, while remembering is on). During a switch's settle window that is the keyboard being switched to, not the one macOS briefly puts back. A switch by hand in an app outside the list adds it too.
+- There is one list: older files' hidden `lastUsedByApp` memory moves into it when the file opens (`moveRememberedAppsIntoTheList`), and nothing writes that memory any more.
+- The Apps and Websites tabs have a fixed height and scroll (`settingsListTabFrame`), so adding or removing a row animates in place and never resizes the window; README pictures set `fitsSettingsListsToContent` to size those tabs to their rows.
+- Both lists show A→Z (`appRulesByName`, `websiteRulesByAddress`), with their add button on top; rules.json keeps the order they were added.
+- `scripts/install.sh` waits until LaunchServices forgets the killed app (`lsappinfo find`): opening too soon fails with -600 (procNotFound) and leaves the app closed.

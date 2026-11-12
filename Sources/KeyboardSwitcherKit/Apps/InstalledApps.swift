@@ -24,14 +24,9 @@ enum InstalledApps {
         return menuIcon
     }
 
-    static func openApps(excluding excludedBundleIdentifiers: Set<String>) -> [AppIdentity] {
-        let runningApplications = NSWorkspace.shared.runningApplications
-        let applicationsWithWindows = runningApplications.filter { application in application.activationPolicy == .regular }
-        let openApps = applicationsWithWindows.compactMap { application in AppIdentity(application: application) }
-        let addableApps = openApps.filter { openApp in !excludedBundleIdentifiers.contains(openApp.bundleIdentifier) }
-        return addableApps.sorted { firstApp, secondApp in
-            firstApp.name.localizedCaseInsensitiveCompare(secondApp.name) == .orderedAscending
-        }
+    static func name(for bundleIdentifier: String) -> String? {
+        guard let applicationURL = applicationURL(for: bundleIdentifier) else { return nil }
+        return AppIdentity(applicationURL: applicationURL)?.name
     }
 
     private static func loadIcon(for bundleIdentifier: String) -> NSImage {

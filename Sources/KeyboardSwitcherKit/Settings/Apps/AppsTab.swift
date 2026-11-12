@@ -15,20 +15,22 @@ public struct AppsTab: View {
     public var body: some View {
         Form {
             Section {
-                if ruleBook.rules.appRules.isEmpty {
+                let sortedAppRules = ruleBook.rules.appRulesByName
+                if sortedAppRules.isEmpty {
                     Text("No apps yet")
                         .foregroundStyle(.secondary)
                 }
-                ForEach(ruleBook.rules.appRules) { appRule in
+                ForEach(sortedAppRules) { appRule in
                     AppRuleRow(appRule: appRule, ruleBook: ruleBook, keyboards: catalog.keyboards)
                 }
-            } footer: {
+            } header: {
                 HStack {
                     Spacer()
                     AddAppButton(ruleBook: ruleBook, catalog: catalog, ownBundleIdentifier: ownBundleIdentifier)
                 }
             }
         }
-        .settingsTabFrame()
+        .animation(.snappy, value: ruleBook.rules.appRules)
+        .settingsListTabFrame()
     }
 }

@@ -1,10 +1,9 @@
 public enum AppEntryPolicy {
-    public static func record(keyboardID: String, in context: SwitchContext, rules: inout RulesFile) {
+    public static func record(keyboardID: String, appName: String, in context: SwitchContext, rules: inout RulesFile) {
         guard rules.preferences.remembersManualSwitches,
-              rules.appRule(for: context.bundleIdentifier) == nil,
-              rules.lastUsedByApp[context.bundleIdentifier] == nil
+              rules.appRule(for: context.bundleIdentifier) == nil
         else { return }
 
-        rules.lastUsedByApp[context.bundleIdentifier] = keyboardID
+        rules.setAppRule(bundleIdentifier: context.bundleIdentifier, appName: appName, keyboardID: keyboardID)
     }
 }

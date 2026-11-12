@@ -7,7 +7,7 @@ public final class AppContext {
 
     public init(services: AppServices) {
         let catalog = KeyboardCatalog(keyboardSystem: services.keyboardSystem, badgeImageMaker: services.badgeImageMaker)
-        let ruleBook = RuleBook(store: services.rulesStore)
+        let ruleBook = RuleBook(store: services.rulesStore, installedAppName: services.installedAppName)
         let tabTracker = BrowserTabTracker(
             tabReader: services.tabReader,
             permissionChecker: services.permissionChecker,

@@ -4,6 +4,7 @@ set -euo pipefail
 repository_root="${0:A:h:h}"
 app_name="Keyboard Switcher"
 installed_app="$HOME/Applications/$app_name.app"
+bundle_identifier="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$repository_root/App/Info.plist")"
 
 "$repository_root/scripts/build-app.sh"
 
@@ -11,6 +12,11 @@ if pgrep -x KeyboardSwitcher >/dev/null; then
   pkill -x KeyboardSwitcher
   while pgrep -x KeyboardSwitcher >/dev/null; do sleep 0.2; done
 fi
+
+for wait_step in {1..50}; do
+  [[ -z "$(lsappinfo find bundleid="$bundle_identifier")" ]] && break
+  sleep 0.2
+done
 
 mkdir -p "$HOME/Applications"
 rm -rf "$installed_app"

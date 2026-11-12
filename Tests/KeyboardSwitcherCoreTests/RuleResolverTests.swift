@@ -5,7 +5,6 @@ struct RuleResolverTests {
     private let canadian = "com.apple.keylayout.Canadian"
     private let canadianCSA = "com.apple.keylayout.Canadian-CSA"
     private let resolver = RuleResolver.standard
-    private let notesContext = SwitchContext(bundleIdentifier: "com.apple.Notes")
     private var bothKeyboards: Set<String> { [canadian, canadianCSA] }
 
     private func rulesWithChromeAndWhatsAppWeb() -> RulesFile {
@@ -30,25 +29,6 @@ struct RuleResolverTests {
         let decision = resolver.decision(for: context, rules: rules, availableKeyboardIDs: bothKeyboards)
 
         #expect(decision == KeyboardDecision(keyboardID: canadian, source: .appRule))
-    }
-
-    @Test func appWithoutARuleUsesTheLastOneUsed() {
-        var rules = RulesFile()
-        rules.lastUsedByApp[notesContext.bundleIdentifier] = canadianCSA
-
-        let decision = resolver.decision(for: notesContext, rules: rules, availableKeyboardIDs: bothKeyboards)
-
-        #expect(decision == KeyboardDecision(keyboardID: canadianCSA, source: .lastUsed))
-    }
-
-    @Test func notRememberingIgnoresWhatWasRemembered() {
-        let preferences = Preferences(remembersManualSwitches: false)
-        var rules = RulesFile(preferences: preferences)
-        rules.lastUsedByApp[notesContext.bundleIdentifier] = canadianCSA
-
-        let decision = resolver.decision(for: notesContext, rules: rules, availableKeyboardIDs: bothKeyboards)
-
-        #expect(decision == nil)
     }
 
     @Test func ruleForAKeyboardThatIsNoLongerEnabledIsSkipped() {

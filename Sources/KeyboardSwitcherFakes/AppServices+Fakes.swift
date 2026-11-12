@@ -3,6 +3,7 @@ import KeyboardSwitcherKit
 
 extension AppServices {
     public static let fakeOwnBundleIdentifier = "com.anthonysarkis.keyboard-switcher"
+    public static let fakeInstalledAppNames = ["com.apple.Notes": "Notes", "com.apple.Safari": "Safari", "com.apple.TextEdit": "TextEdit"]
 
     public static func fake(
         keyboardSystem: FakeKeyboardSystem,
@@ -23,6 +24,7 @@ extension AppServices {
             loginItem: loginItem,
             macKeyboardIcon: macKeyboardIcon,
             rulesStore: rulesStore,
+            installedAppName: { bundleIdentifier in fakeInstalledAppNames[bundleIdentifier] },
             ownBundleIdentifier: fakeOwnBundleIdentifier,
             settleDuration: settleDuration,
             browserCheckInterval: 0.5

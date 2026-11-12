@@ -88,11 +88,11 @@ final class StatusMenuBuilder {
                 ruleBook.setAppRule(bundleIdentifier: frontApp.bundleIdentifier, appName: frontApp.name, keyboardID: keyboard.id)
             }
         }
-        let noRuleTitle = ruleBook.rules.preferences.noRuleTitle
-        let noRuleItem = MenuItemFactory.actionItem(noRuleTitle, isChecked: appRule == nil) { [ruleBook] in
+        guard !ruleBook.rules.preferences.remembersManualSwitches else { return [header] + keyboardItems }
+        let leaveAsIsItem = MenuItemFactory.actionItem("Leave as is", isChecked: appRule == nil) { [ruleBook] in
             ruleBook.removeAppRule(bundleIdentifier: frontApp.bundleIdentifier)
         }
-        return [header] + keyboardItems + [noRuleItem]
+        return [header] + keyboardItems + [leaveAsIsItem]
     }
 
     private func appControlSection() -> [NSMenuItem] {

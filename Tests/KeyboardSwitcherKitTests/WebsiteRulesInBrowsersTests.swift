@@ -43,7 +43,7 @@ struct WebsiteRulesInBrowsersTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
 
         #expect(harness.keyboardSystem.currentID == canadianCSA)
-        #expect(harness.ruleBook.rules.lastUsedByApp[chromeBundleIdentifier] == nil)
+        #expect(harness.ruleBook.rules.appRule(for: chromeBundleIdentifier) == nil)
     }
 
     @Test func asksEachBrowserOnceAndWaitsForTheAnswer() async throws {

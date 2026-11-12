@@ -2,7 +2,6 @@ public struct RuleResolver: Sendable {
     public static let standard = RuleResolver(sources: [
         WebsiteRuleSource(),
         AppRuleSource(),
-        LastUsedRuleSource(),
     ])
 
     private let sources: [any KeyboardRuleSource]

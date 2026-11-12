@@ -8,13 +8,16 @@ enum SettingsTabSnapshots {
             catalog: context.catalog,
             ownBundleIdentifier: context.coordinator.ownBundleIdentifier
         )
-        let appsTabWithIcons = appsTab.environment(\.appIconOverrides, appIcons)
+        let appsTabWithIcons = appsTab
+            .environment(\.appIconOverrides, appIcons)
+            .environment(\.fitsSettingsListsToContent, true)
         try ViewSnapshotter.write(appsTabWithIcons, named: "settings-apps", in: folder)
     }
 
     static func writeWebsitesTab(of context: AppContext, in folder: URL) throws {
         let websitesTab = WebsitesTab(ruleBook: context.ruleBook, catalog: context.catalog, tabTracker: context.tabTracker)
-        try ViewSnapshotter.write(websitesTab, named: "settings-websites", in: folder)
+        let websitesTabFittingContent = websitesTab.environment(\.fitsSettingsListsToContent, true)
+        try ViewSnapshotter.write(websitesTabFittingContent, named: "settings-websites", in: folder)
     }
 
     static func writeGeneralTab(of context: AppContext, in folder: URL) throws {
