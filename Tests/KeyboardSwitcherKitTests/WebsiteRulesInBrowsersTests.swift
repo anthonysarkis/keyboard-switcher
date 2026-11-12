@@ -211,6 +211,19 @@ struct WebsiteRulesInBrowsersTests {
         #expect(harness.keyboardSystem.currentID == canadianCSA)
     }
 
+    @Test func aSiteJoiningTheListGetsItsIconFromTheSite() async throws {
+        let iconData = SampleWebsiteIcons.png(pixels: 180, shape: .square)
+        let websiteIconFetcher = FakeWebsiteIcons(answers: ["claude.ai": iconData])
+        let harness = try TestHarness(currentKeyboardID: canadian, websiteIconFetcher: websiteIconFetcher)
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.ruleBook.setWebsiteRule(website: "claude.ai", keyboardID: canadianCSA)
+        await harness.context.websiteIcons.waitForLoads()
+
+        #expect(websiteIconFetcher.requests == ["claude.ai"])
+        #expect(harness.context.websiteIcons.icon(for: "claude.ai")?.fillsShape == true)
+    }
+
     @Test func browserThatSaysNoIsNeverRead() throws {
         let rules = rulesWithWhatsAppWeb()
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)

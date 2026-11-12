@@ -5,10 +5,13 @@ public struct AppServices {
     private static let macOSSettleDuration: Duration = .milliseconds(600)
     private static let browserTabCheckInterval: TimeInterval = 0.5
     private static let firstTabReadPatience: Duration = .milliseconds(200)
+    private static let websiteIconFolderName = "Website Icons"
 
     public var keyboardSystem: any KeyboardSystem
     public var badgeImageMaker: any BadgeImageMaking
     public var tabReader: any BrowserTabReading
+    public var websiteIconFetcher: any WebsiteIconFetching
+    public var websiteIconFolder: URL
     public var permissionChecker: any BrowserPermissionChecking
     public var bubble: any BubblePresenting
     public var loginItem: any LoginItemControlling
@@ -24,6 +27,8 @@ public struct AppServices {
         keyboardSystem: any KeyboardSystem,
         badgeImageMaker: any BadgeImageMaking,
         tabReader: any BrowserTabReading,
+        websiteIconFetcher: any WebsiteIconFetching,
+        websiteIconFolder: URL,
         permissionChecker: any BrowserPermissionChecking,
         bubble: any BubblePresenting,
         loginItem: any LoginItemControlling,
@@ -38,6 +43,8 @@ public struct AppServices {
         self.keyboardSystem = keyboardSystem
         self.badgeImageMaker = badgeImageMaker
         self.tabReader = tabReader
+        self.websiteIconFetcher = websiteIconFetcher
+        self.websiteIconFolder = websiteIconFolder
         self.permissionChecker = permissionChecker
         self.bubble = bubble
         self.loginItem = loginItem
@@ -53,9 +60,12 @@ public struct AppServices {
     public static func live(bundleIdentifier: String) -> AppServices {
         let rulesFileURL = RulesStore.defaultFileURL(bundleIdentifier: bundleIdentifier)
         let rulesStore = RulesStore(fileURL: rulesFileURL)
+        let appFolder = rulesFileURL.deletingLastPathComponent()
+        let websiteIconFolder = appFolder.appending(path: websiteIconFolderName, directoryHint: .isDirectory)
         let keyboardSystem = TextInputSources()
         let badgeImageMaker = liveBadgeImageMaker()
         let tabReader = AppleEventTabReader()
+        let websiteIconFetcher = LinkPresentationIconFetcher()
         let permissionChecker = AutomationPermissionChecker()
         let bubble = SwitchBubblePanel()
         let loginItem = MainAppLoginItem()
@@ -64,6 +74,8 @@ public struct AppServices {
             keyboardSystem: keyboardSystem,
             badgeImageMaker: badgeImageMaker,
             tabReader: tabReader,
+            websiteIconFetcher: websiteIconFetcher,
+            websiteIconFolder: websiteIconFolder,
             permissionChecker: permissionChecker,
             bubble: bubble,
             loginItem: loginItem,

@@ -40,7 +40,7 @@
   - `Keyboards/`, `Rules/`, `Websites/`, `Resolution/` (rule sources and the resolver), `Storage/` (rules.json).
 - `Sources/KeyboardSwitcherKit`: the macOS parts.
   - `Switching/`: `SwitchCoordinator` turns events into switches; `ManualSwitchDetector` tells your switches from the app's.
-  - `Keyboards/` (`KeyboardCatalog`, Text Input Sources), `Rules/` (`RuleBook`), `Browsers/` (`BrowserTabTracker`, tab reading, permissions), `Apps/`.
+  - `Keyboards/` (`KeyboardCatalog`, Text Input Sources), `Rules/` (`RuleBook`), `Browsers/` (`BrowserTabTracker`, tab reading, permissions), `WebsiteIcons/` (`WebsiteIconStore`, each site's own icon), `Apps/`.
   - `Badge/`: the badge images, shared by the menu bar and the bubble: `MacBadgeImages` (drawn by macOS) with `DrawnBadgeImages` as the fallback.
   - `MenuBar/`, `Bubble/`, `Settings/`, `System/` (Login Items, the Mac's own icon), `Labels/`, `Logging/`.
   - `App/`: `AppServices` (everything that talks to macOS), `AppContext` (the object graph), `AppDelegate`.
@@ -67,6 +67,11 @@
 - `BrowserTabTracker.track` counts each start (`trackingCount`): an answer from a browser you already left is dropped.
 - The badge menu rebuilds when its tab read lands, if it is still open (`StatusItemController.isMenuShowing`).
 - In zsh, `log` is a built-in: read the app's log with `/usr/bin/log show --predicate 'process == "KeyboardSwitcher"'`.
+- Website icons come from the site itself (`LinkPresentationIconFetcher`), never a favicon service, which would learn the whole list. That is the app's only network use: say so in the README if that changes.
+- `WebsiteIconStore` follows `RuleBook.onWebsiteListChange`: icons live in `Application Support/<bundle id>/Website Icons/<site>.png` (96 px at most, uncropped), are asked again after 30 days, and a site without one is asked again at most every 5 minutes, when its row shows.
+- LinkPresentation answers on a background queue: use its `async` call, or `@Sendable` closures in `nonisolated` code, never a closure written under the main actor (Swift 6 stops the app).
+- `WebsiteIconView` copies the app icons beside it, measured on Chrome's icon at 2x: 20 pt body, 4.5 pt continuous corners, raised 0.5 pt, shadow 36 % black, 1 pt blur, 0.5 pt down. Logos (under 90 % opaque) are cropped to what shows on white and drawn once on a white square, so every icon is one opaque square.
+- README pictures take website icons from `docs/website-icons/`; refresh them with `swift run keyboard-switcher-dev website-icons docs/website-icons <every README site>` (that folder keeps only the sites named).
 - Right after a switch, macOS can put back the previous app's keyboard for 20 to 60 ms: `ManualSwitchDetector` ignores changes for 600 ms after each switch, then the coordinator re-selects once if needed.
 - `RuleBook.recordManualSwitch` must not announce an edit, or the app's rule would undo the switch you just made.
 - Safari in /Applications is a symlink: resolve it before asking for its icon, or the icon gets an alias arrow.

@@ -7,5 +7,7 @@ enum Usage {
       badges              Check that macOS draws the badges, and how close the app's own drawing comes.
       snapshots <folder>  Draw the Settings tabs, the badges and the bubbles as PNG files.
       readme-images       Draw the README pictures into docs/images: the animated SVGs and the Settings tabs.
+      website-icons <folder> <sites>
+                          Ask each site for its icon the way the app does, and keep only those icons in <folder>.
     """
 }

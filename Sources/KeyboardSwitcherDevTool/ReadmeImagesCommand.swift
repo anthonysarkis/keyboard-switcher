@@ -15,7 +15,8 @@ enum ReadmeImagesCommand {
 
         let appIcons = ReadmeExample.appIcons()
         try SettingsTabSnapshots.writeAppsTab(of: context, in: folder, appIcons: appIcons)
-        try SettingsTabSnapshots.writeWebsitesTab(of: context, in: folder)
+        let websiteIcons = ReadmeExample.websiteIcons()
+        try SettingsTabSnapshots.writeWebsitesTab(of: context, in: folder, websiteIcons: websiteIcons)
         try ReadmeAnimations.write(in: folder)
     }
 }

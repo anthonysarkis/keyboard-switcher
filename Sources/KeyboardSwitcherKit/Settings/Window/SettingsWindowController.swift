@@ -28,7 +28,12 @@ final class SettingsWindowController: NSWindowController {
             catalog: context.catalog,
             ownBundleIdentifier: context.coordinator.ownBundleIdentifier
         )
-        let websitesTab = WebsitesTab(ruleBook: context.ruleBook, catalog: context.catalog, tabTracker: context.tabTracker)
+        let websitesTab = WebsitesTab(
+            ruleBook: context.ruleBook,
+            catalog: context.catalog,
+            tabTracker: context.tabTracker,
+            websiteIcons: context.websiteIcons
+        )
         let generalTab = GeneralTab(ruleBook: context.ruleBook, systemToggles: context.systemToggles)
         return [
             tabItem(label: "Apps", symbolName: "square.grid.2x2", content: appsTab),

@@ -31,4 +31,16 @@ struct WebsiteAddressTests {
     func typedTextThatIsNotAWebsiteIsRefused(text: String) {
         #expect(WebsiteAddress.website(fromTypedText: text) == nil)
     }
+
+    @Test(arguments: [
+        ("github.com", "https://github.com/"),
+        ("web.whatsapp.com", "https://web.whatsapp.com/"),
+        ("localhost", "http://localhost/"),
+        ("app.localhost", "http://app.localhost/"),
+        ("printer.local", "http://printer.local/"),
+        ("192.168.1.20", "http://192.168.1.20/"),
+    ])
+    func eachWebsiteHasAHomePage(website: String, expectedAddress: String) {
+        #expect(WebsiteAddress.homePage(of: website)?.absoluteString == expectedAddress)
+    }
 }

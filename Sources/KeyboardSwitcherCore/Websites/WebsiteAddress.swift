@@ -28,6 +28,25 @@ public enum WebsiteAddress {
         return website
     }
 
+    public static func homePage(of website: String) -> URL? {
+        var components = URLComponents()
+        components.scheme = isOnThisNetwork(website) ? "http" : "https"
+        components.host = website
+        components.path = "/"
+        return components.url
+    }
+
+    private static func isOnThisNetwork(_ host: String) -> Bool {
+        host == localhost || host.hasSuffix(".localhost") || host.hasSuffix(".local") || isIPv4Address(host)
+    }
+
+    private static func isIPv4Address(_ host: String) -> Bool {
+        let parts = host.split(separator: ".", omittingEmptySubsequences: false)
+        return parts.count == 4 && parts.allSatisfy { part in
+            !part.isEmpty && part.allSatisfy { character in character.isASCII && character.isNumber }
+        }
+    }
+
     private static func withoutTrailingDot(_ host: String) -> String {
         guard host.hasSuffix(".") else { return host }
         let trimmedHost = host.dropLast()

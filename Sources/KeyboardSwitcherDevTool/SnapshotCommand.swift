@@ -11,7 +11,8 @@ enum SnapshotCommand {
         let context = PreviewContext.make()
 
         try SettingsTabSnapshots.writeAppsTab(of: context, in: folder)
-        try SettingsTabSnapshots.writeWebsitesTab(of: context, in: folder)
+        let websiteIcons = ReadmeExample.websiteIcons()
+        try SettingsTabSnapshots.writeWebsitesTab(of: context, in: folder, websiteIcons: websiteIcons)
         try SettingsTabSnapshots.writeGeneralTab(of: context, in: folder)
         try writeBadgesAndBubbles(in: folder)
     }

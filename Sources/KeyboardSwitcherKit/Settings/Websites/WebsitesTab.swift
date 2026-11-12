@@ -5,12 +5,14 @@ public struct WebsitesTab: View {
     let ruleBook: RuleBook
     let catalog: KeyboardCatalog
     let tabTracker: BrowserTabTracker
+    let websiteIcons: WebsiteIconStore
     @State private var isAddingWebsite = false
 
-    public init(ruleBook: RuleBook, catalog: KeyboardCatalog, tabTracker: BrowserTabTracker) {
+    public init(ruleBook: RuleBook, catalog: KeyboardCatalog, tabTracker: BrowserTabTracker, websiteIcons: WebsiteIconStore) {
         self.ruleBook = ruleBook
         self.catalog = catalog
         self.tabTracker = tabTracker
+        self.websiteIcons = websiteIcons
     }
 
     public var body: some View {
@@ -22,7 +24,7 @@ public struct WebsitesTab: View {
                         .foregroundStyle(.secondary)
                 }
                 ForEach(sortedWebsiteRules) { websiteRule in
-                    WebsiteRuleRow(websiteRule: websiteRule, ruleBook: ruleBook, keyboards: catalog.keyboards)
+                    WebsiteRuleRow(websiteRule: websiteRule, ruleBook: ruleBook, keyboards: catalog.keyboards, websiteIcons: websiteIcons)
                 }
             } header: {
                 HStack {

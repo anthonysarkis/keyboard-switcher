@@ -33,6 +33,16 @@ case "snapshots":
         print("Snapshots failed: \(error)")
         exit(1)
     }
+case "website-icons":
+    let arguments = Array(commandArguments)
+    guard let folderPath = arguments.first, arguments.count > 1 else {
+        print(Usage.text)
+        exit(2)
+    }
+    let folder = URL(fileURLWithPath: folderPath)
+    let websites = Array(arguments.dropFirst())
+    let everySiteHasAnIcon = await WebsiteIconsCommand.run(writingTo: folder, websites: websites)
+    exit(everySiteHasAnIcon ? 0 : 1)
 default:
     print(Usage.text)
     exit(2)

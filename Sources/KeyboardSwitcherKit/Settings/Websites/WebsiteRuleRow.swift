@@ -5,6 +5,7 @@ struct WebsiteRuleRow: View {
     let websiteRule: WebsiteRule
     let ruleBook: RuleBook
     let keyboards: [Keyboard]
+    let websiteIcons: WebsiteIconStore
     @State private var isHovering = false
 
     var body: some View {
@@ -13,7 +14,7 @@ struct WebsiteRuleRow: View {
                 .removeButton(accessibilityLabel: "Remove the rule for \(websiteRule.website)", isVisible: isHovering, action: remove)
         } label: {
             HStack(spacing: 10) {
-                WebsiteIconView()
+                WebsiteIconView(website: websiteRule.website, websiteIcons: websiteIcons)
                 Text(websiteRule.website)
             }
         }

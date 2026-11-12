@@ -14,10 +14,17 @@ enum SettingsTabSnapshots {
         try ViewSnapshotter.write(appsTabWithIcons, named: "settings-apps", in: folder)
     }
 
-    static func writeWebsitesTab(of context: AppContext, in folder: URL) throws {
-        let websitesTab = WebsitesTab(ruleBook: context.ruleBook, catalog: context.catalog, tabTracker: context.tabTracker)
-        let websitesTabFittingContent = websitesTab.environment(\.fitsSettingsListsToContent, true)
-        try ViewSnapshotter.write(websitesTabFittingContent, named: "settings-websites", in: folder)
+    static func writeWebsitesTab(of context: AppContext, in folder: URL, websiteIcons: [String: WebsiteIcon] = [:]) throws {
+        let websitesTab = WebsitesTab(
+            ruleBook: context.ruleBook,
+            catalog: context.catalog,
+            tabTracker: context.tabTracker,
+            websiteIcons: context.websiteIcons
+        )
+        let websitesTabWithIcons = websitesTab
+            .environment(\.websiteIconOverrides, websiteIcons)
+            .environment(\.fitsSettingsListsToContent, true)
+        try ViewSnapshotter.write(websitesTabWithIcons, named: "settings-websites", in: folder)
     }
 
     static func writeGeneralTab(of context: AppContext, in folder: URL) throws {

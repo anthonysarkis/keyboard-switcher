@@ -2,6 +2,7 @@ public final class AppContext {
     public let catalog: KeyboardCatalog
     public let ruleBook: RuleBook
     public let tabTracker: BrowserTabTracker
+    public let websiteIcons: WebsiteIconStore
     public let coordinator: SwitchCoordinator
     public let systemToggles: SystemToggles
 
@@ -14,6 +15,11 @@ public final class AppContext {
             checkInterval: services.browserCheckInterval,
             firstReadPatience: services.firstTabReadPatience
         )
+        let websiteIcons = WebsiteIconStore(fetcher: services.websiteIconFetcher, folder: services.websiteIconFolder)
+        ruleBook.onWebsiteListChange = { [weak websiteIcons, weak ruleBook] in
+            guard let websiteIcons, let ruleBook else { return }
+            websiteIcons.follow(websites: ruleBook.websites)
+        }
         let manualSwitchDetector = ManualSwitchDetector(settleDuration: services.settleDuration)
         let coordinator = SwitchCoordinator(
             catalog: catalog,
@@ -28,6 +34,7 @@ public final class AppContext {
         self.catalog = catalog
         self.ruleBook = ruleBook
         self.tabTracker = tabTracker
+        self.websiteIcons = websiteIcons
         self.coordinator = coordinator
         self.systemToggles = systemToggles
     }

@@ -205,6 +205,7 @@ flowchart TD
 2. In a browser, Apple Events read the tab's address in the background: twice a second while you have a website rule, and once when you switch language by hand.
 3. `TISSelectInputSource` switches the keyboard.
 4. The badge comes from `KLInputSourceIconManager`, the class behind the Mac's own input menu; if a macOS update removes it, the app draws the same badge itself.
+5. Each website's icon comes from that website, once, through Apple's `LinkPresentation` (the part behind link previews in Messages), and stays on your Mac.
 
 Rules live in one small JSON file: `~/Library/Application Support/com.anthonysarkis.keyboard-switcher/rules.json`.
 
@@ -222,6 +223,10 @@ Website rules don't: Firefox doesn't share the tab's address with other apps.
 **Accessibility or Screen Recording access?**
 No.
 It only asks to read the current tab, browser by browser, the first time it needs the website (for example, the first time you switch language there).
+
+**Does it go online?**
+Only to show each website's icon in Settings.
+It asks that website once, the same request your browser makes, and keeps the icon on your Mac.
 
 **Will it fight me when I switch by hand?**
 No.

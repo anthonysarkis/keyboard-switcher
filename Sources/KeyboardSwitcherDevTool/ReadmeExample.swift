@@ -65,6 +65,14 @@ enum ReadmeExample {
         return appIcons
     }
 
+    static func websiteIcons() -> [String: WebsiteIcon] {
+        var websiteIcons: [String: WebsiteIcon] = [:]
+        for website in websites {
+            websiteIcons[website.host] = website.websiteIcon
+        }
+        return websiteIcons
+    }
+
     static func rules() -> RulesFile {
         var rules = RulesFile()
         for app in apps {

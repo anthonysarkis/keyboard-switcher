@@ -6,6 +6,7 @@ public final class RuleBook {
     public private(set) var rules = RulesFile()
     public private(set) var startedWithoutRulesFile = false
     @ObservationIgnored var onEdit: (@MainActor () -> Void)?
+    @ObservationIgnored var onWebsiteListChange: (@MainActor () -> Void)?
 
     private let store: RulesStore
     private let installedAppName: (String) -> String?
@@ -13,6 +14,10 @@ public final class RuleBook {
     public init(store: RulesStore, installedAppName: @escaping (String) -> String?) {
         self.store = store
         self.installedAppName = installedAppName
+    }
+
+    public var websites: [String] {
+        rules.websiteRules.map(\.website)
     }
 
     public var needsTabAddresses: Bool {
@@ -64,6 +69,7 @@ public final class RuleBook {
             rules = RulesFile()
             save()
         }
+        onWebsiteListChange?()
     }
 
     func recordManualSwitch(keyboardID: String, appName: String, in context: SwitchContext) {
@@ -95,8 +101,12 @@ public final class RuleBook {
         var updatedRules = rules
         change(&updatedRules)
         guard updatedRules != rules else { return false }
+        let websitesBefore = Set(websites)
         rules = updatedRules
         save()
+        if Set(websites) != websitesBefore {
+            onWebsiteListChange?()
+        }
         return true
     }
 

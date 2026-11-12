@@ -12,10 +12,11 @@ struct TestHarness {
     let context: AppContext
     let keyboardSystem: FakeKeyboardSystem
     let browsers: FakeBrowsers
+    let websiteIconFetcher: FakeWebsiteIcons
     let bubble: RecordingBubble
     let rulesStore: RulesStore
 
-    init(currentKeyboardID: String, savedRules: RulesFile? = nil) throws {
+    init(currentKeyboardID: String, savedRules: RulesFile? = nil, websiteIconFetcher: FakeWebsiteIcons = FakeWebsiteIcons()) throws {
         let rulesStore = TemporaryRulesStore.make()
         if let savedRules {
             try rulesStore.save(savedRules)
@@ -23,11 +24,18 @@ struct TestHarness {
         let keyboardSystem = FakeKeyboardSystem(currentID: currentKeyboardID)
         let browsers = FakeBrowsers()
         let bubble = RecordingBubble()
-        let services = AppServices.fake(keyboardSystem: keyboardSystem, browsers: browsers, bubble: bubble, rulesStore: rulesStore)
+        let services = AppServices.fake(
+            keyboardSystem: keyboardSystem,
+            browsers: browsers,
+            bubble: bubble,
+            rulesStore: rulesStore,
+            websiteIcons: websiteIconFetcher
+        )
 
         self.context = AppContext(services: services)
         self.keyboardSystem = keyboardSystem
         self.browsers = browsers
+        self.websiteIconFetcher = websiteIconFetcher
         self.bubble = bubble
         self.rulesStore = rulesStore
     }

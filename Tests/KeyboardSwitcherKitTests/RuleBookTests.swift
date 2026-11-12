@@ -82,4 +82,21 @@ struct RuleBookTests {
         #expect(wasRefused)
         #expect(ruleBook.rules.websiteRules.map(\.website) == ["claude.ai"])
     }
+
+    @Test func theWebsiteListAnnouncesOnlyWhenSitesComeOrGo() {
+        let store = TemporaryRulesStore.make()
+        let ruleBook = RuleBook(store: store, installedAppName: installedAppName)
+        var announcements: [[String]] = []
+        ruleBook.onWebsiteListChange = { announcements.append(ruleBook.websites) }
+        let githubContext = SwitchContext(bundleIdentifier: "com.google.Chrome", website: "github.com")
+
+        ruleBook.load()
+        ruleBook.setWebsiteRule(website: "claude.ai", keyboardID: canadian)
+        ruleBook.setWebsiteRule(website: "claude.ai", keyboardID: canadianCSA)
+        ruleBook.setAppRule(bundleIdentifier: "com.apple.Safari", appName: "Safari", keyboardID: canadian)
+        ruleBook.recordManualSwitch(keyboardID: canadian, appName: "Google Chrome", in: githubContext)
+        ruleBook.removeWebsiteRule(website: "claude.ai")
+
+        #expect(announcements == [[], ["claude.ai"], ["claude.ai", "github.com"], ["github.com"]])
+    }
 }
