@@ -17,8 +17,8 @@ public struct GeneralTab: View {
                 Toggle("Show a bubble when it switches", isOn: bubbleBinding)
                 Toggle("Show the Mac's own keyboard icon", isOn: macKeyboardIconBinding)
                 Toggle(isOn: remembersManualSwitchesBinding) {
-                    Text("Remember keyboard changes you make yourself")
-                    Text("Switch with Control-Space or \(globeKey), and that app or website gets it back next time.\nWhen off, the keyboard changes only for apps and websites in your list.")
+                    Text("Remember each app's keyboard")
+                    Text("Each app gets back the keyboard it had last time, including one you pick with Control-Space or \(globeKey).\nWhen off, the keyboard changes only for apps and websites in your list.")
                 }
             }
         }

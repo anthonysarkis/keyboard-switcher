@@ -72,3 +72,5 @@
 - Which badge is filled depends on every keyboard that is on (Canadian alone shows "A"): rebuild all badges when the keyboard list changes, never one at a time.
 - If a macOS update removes that drawer, `DrawnBadgeImages` takes over with the measured look: 22 × 16 pt, 5 pt corners, SF semibold 11 pt, narrowed (wdth 65, opsz 16) when the letters don't fit.
 - `swift run keyboard-switcher-dev badges` says whether macOS still draws them and how far the fallback is (CSA identical, CA about 0.1 pt to the left).
+- New users start with an empty list. `SampleRules` in `KeyboardSwitcherFakes` (WhatsApp, VS Code, Ghostty) is test and preview data only: never ship it as a starting list.
+- An app outside the list remembers the keyboard it had when it first comes to the front (`AppEntryPolicy`, only while remembering is on). During a switch's settle window that is the keyboard being switched to, not the one macOS briefly puts back.

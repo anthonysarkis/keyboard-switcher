@@ -226,7 +226,7 @@ It only asks to read the current tab, browser by browser, once you add a website
 **Will it fight me when I switch by hand?**
 No.
 It remembers your pick: that app or website gets it back next time.
-Turn off "Remember keyboard changes you make yourself" in Settings › General, and only your rules switch the keyboard.
+Turn off "Remember each app's keyboard" in Settings › General, and only your rules switch the keyboard.
 
 </details>
 

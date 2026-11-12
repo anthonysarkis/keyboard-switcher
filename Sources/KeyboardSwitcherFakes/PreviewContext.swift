@@ -38,7 +38,7 @@ public enum PreviewContext {
     }
 
     private static func sampleRules() -> RulesFile {
-        var rules = StarterRules.make(availableKeyboardIDs: SampleKeyboards.bothIDs)
+        var rules = SampleRules.make()
         rules.setWebsiteRule(website: "claude.ai", keyboardID: SampleKeyboards.canadian.id)
         rules.setWebsiteRule(website: "web.whatsapp.com", keyboardID: SampleKeyboards.canadianCSA.id)
         return rules

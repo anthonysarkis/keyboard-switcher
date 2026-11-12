@@ -8,25 +8,28 @@ struct RuleBookTests {
     private let canadian = SampleKeyboards.canadian.id
     private let canadianCSA = SampleKeyboards.canadianCSA.id
 
-    @Test func editsAreAnnouncedButRememberedSwitchesAreNot() {
+    @Test func editsAreAnnouncedButRememberedKeyboardsAreNot() {
         let store = TemporaryRulesStore.make()
         let ruleBook = RuleBook(store: store)
-        ruleBook.load(availableKeyboardIDs: SampleKeyboards.bothIDs)
+        ruleBook.load()
         var editCount = 0
         ruleBook.onEdit = { editCount += 1 }
         let notesContext = SwitchContext(bundleIdentifier: "com.apple.Notes")
+        let textEditContext = SwitchContext(bundleIdentifier: "com.apple.TextEdit")
 
         ruleBook.setAppRule(bundleIdentifier: "com.apple.Safari", appName: "Safari", keyboardID: canadianCSA)
         ruleBook.recordManualSwitch(keyboardID: canadian, in: notesContext)
+        ruleBook.rememberKeyboardOnEntry(keyboardID: canadianCSA, in: textEditContext)
 
         #expect(editCount == 1)
         #expect(ruleBook.rules.lastUsedByApp["com.apple.Notes"] == canadian)
+        #expect(ruleBook.rules.lastUsedByApp["com.apple.TextEdit"] == canadianCSA)
     }
 
     @Test func anEditThatChangesNothingIsNotAnnounced() {
         let store = TemporaryRulesStore.make()
         let ruleBook = RuleBook(store: store)
-        ruleBook.load(availableKeyboardIDs: SampleKeyboards.bothIDs)
+        ruleBook.load()
         var editCount = 0
         ruleBook.onEdit = { editCount += 1 }
 
@@ -43,7 +46,7 @@ struct RuleBookTests {
         try unreadableContent.write(to: store.fileURL)
         let ruleBook = RuleBook(store: store)
 
-        ruleBook.load(availableKeyboardIDs: SampleKeyboards.bothIDs)
+        ruleBook.load()
 
         let folderContents = try FileManager.default.contentsOfDirectory(atPath: folder.path)
         #expect(ruleBook.rules == RulesFile())
@@ -54,7 +57,7 @@ struct RuleBookTests {
     @Test func addingAWebsiteFromTypedTextCleansItUp() {
         let store = TemporaryRulesStore.make()
         let ruleBook = RuleBook(store: store)
-        ruleBook.load(availableKeyboardIDs: SampleKeyboards.bothIDs)
+        ruleBook.load()
 
         let wasAdded = ruleBook.addWebsiteRule(typedText: "https://www.Claude.ai/new", keyboardID: canadian)
         let wasRefused = !ruleBook.addWebsiteRule(typedText: "not a site", keyboardID: canadian)

@@ -2,7 +2,7 @@ public struct Preferences: Codable, Hashable, Sendable {
     public var showBubble: Bool
     public var remembersManualSwitches: Bool
 
-    public init(showBubble: Bool = true, remembersManualSwitches: Bool = true) {
+    public init(showBubble: Bool = false, remembersManualSwitches: Bool = true) {
         self.showBubble = showBubble
         self.remembersManualSwitches = remembersManualSwitches
     }

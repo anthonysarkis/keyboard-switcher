@@ -2,8 +2,8 @@ import Testing
 import KeyboardSwitcherCore
 
 struct ManualSwitchPolicyTests {
-    private let canadian = StarterRules.canadianKeyboardID
-    private let canadianCSA = StarterRules.canadianCSAKeyboardID
+    private let canadian = "com.apple.keylayout.Canadian"
+    private let canadianCSA = "com.apple.keylayout.Canadian-CSA"
     private let whatsAppContext = SwitchContext(bundleIdentifier: "net.whatsapp.WhatsApp")
     private let notesContext = SwitchContext(bundleIdentifier: "com.apple.Notes")
 

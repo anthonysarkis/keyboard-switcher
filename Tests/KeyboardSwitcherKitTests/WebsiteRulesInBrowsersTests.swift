@@ -9,7 +9,7 @@ struct WebsiteRulesInBrowsersTests {
     private let chromeBundleIdentifier = TestHarness.chrome.bundleIdentifier
 
     private func rulesWithWhatsAppWeb() -> RulesFile {
-        var rules = TestHarness.starterRules()
+        var rules = TestHarness.sampleRules()
         rules.setAppRule(bundleIdentifier: TestHarness.chrome.bundleIdentifier, appName: TestHarness.chrome.name, keyboardID: canadian)
         rules.setWebsiteRule(website: "web.whatsapp.com", keyboardID: canadianCSA)
         return rules
@@ -30,6 +30,20 @@ struct WebsiteRulesInBrowsersTests {
         harness.tabTracker.readNow()
         harness.tabTracker.onWebsiteChange?()
         #expect(harness.keyboardSystem.currentID == canadian)
+    }
+
+    @Test func browserOpenedOnAWebsiteWithARuleRemembersNothing() throws {
+        var rules = TestHarness.sampleRules()
+        rules.setWebsiteRule(website: "web.whatsapp.com", keyboardID: canadianCSA)
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://web.whatsapp.com/"
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+
+        #expect(harness.keyboardSystem.currentID == canadianCSA)
+        #expect(harness.ruleBook.rules.lastUsedByApp[chromeBundleIdentifier] == nil)
     }
 
     @Test func asksEachBrowserOnceAndWaitsForTheAnswer() async throws {

@@ -4,7 +4,7 @@ final class ManualSwitchDetector {
 
     private let settleDuration: Duration
     private var knownKeyboardID: String?
-    private var settlingKeyboardID: String?
+    private(set) var settlingKeyboardID: String?
 
     init(settleDuration: Duration) {
         self.settleDuration = settleDuration

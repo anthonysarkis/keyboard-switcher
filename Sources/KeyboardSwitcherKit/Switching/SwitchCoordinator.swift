@@ -40,7 +40,7 @@ public final class SwitchCoordinator {
 
     public func start(frontApp: AppIdentity?) {
         catalog.refresh()
-        ruleBook.load(availableKeyboardIDs: catalog.availableKeyboardIDs)
+        ruleBook.load()
         manualSwitchDetector.note(catalog.currentKeyboardID)
         connectEvents()
         Log.switching.notice("Started with \(self.catalog.keyboards.count) keyboards, \(self.ruleBook.rules.appRules.count) app rules, \(self.ruleBook.rules.websiteRules.count) website rules")
@@ -73,6 +73,18 @@ public final class SwitchCoordinator {
 
         Log.switching.notice("In front: \(otherApp.bundleIdentifier, privacy: .public)")
         applyRules(showsBubble: showsBubble)
+        rememberKeyboardWhenNothingApplies()
+    }
+
+    private func rememberKeyboardWhenNothingApplies() {
+        guard let context = currentContext, ruleDecision(for: context) == nil else { return }
+        let enteredKeyboardID = manualSwitchDetector.settlingKeyboardID ?? catalog.readCurrentKeyboardID()
+        guard let enteredKeyboardID else { return }
+        ruleBook.rememberKeyboardOnEntry(keyboardID: enteredKeyboardID, in: context)
+    }
+
+    private func ruleDecision(for context: SwitchContext) -> KeyboardDecision? {
+        resolver.decision(for: context, rules: ruleBook.rules, availableKeyboardIDs: catalog.availableKeyboardIDs)
     }
 
     private func rulesWereEdited() {
@@ -93,7 +105,7 @@ public final class SwitchCoordinator {
     private func applyRules(showsBubble: Bool) {
         guard let context = currentContext else { return }
         let selectedKeyboardID = catalog.readCurrentKeyboardID()
-        let decision = resolver.decision(for: context, rules: ruleBook.rules, availableKeyboardIDs: catalog.availableKeyboardIDs)
+        let decision = ruleDecision(for: context)
 
         guard let decision, decision.keyboardID != selectedKeyboardID else {
             manualSwitchDetector.note(selectedKeyboardID)

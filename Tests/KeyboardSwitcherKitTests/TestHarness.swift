@@ -32,8 +32,8 @@ struct TestHarness {
         self.rulesStore = rulesStore
     }
 
-    static func starterRules() -> RulesFile {
-        StarterRules.make(availableKeyboardIDs: SampleKeyboards.bothIDs)
+    static func sampleRules() -> RulesFile {
+        SampleRules.make()
     }
 
     var coordinator: SwitchCoordinator { context.coordinator }

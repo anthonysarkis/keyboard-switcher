@@ -2,8 +2,8 @@ import Testing
 import KeyboardSwitcherCore
 
 struct RuleResolverTests {
-    private let canadian = StarterRules.canadianKeyboardID
-    private let canadianCSA = StarterRules.canadianCSAKeyboardID
+    private let canadian = "com.apple.keylayout.Canadian"
+    private let canadianCSA = "com.apple.keylayout.Canadian-CSA"
     private let resolver = RuleResolver.standard
     private let notesContext = SwitchContext(bundleIdentifier: "com.apple.Notes")
     private var bothKeyboards: Set<String> { [canadian, canadianCSA] }

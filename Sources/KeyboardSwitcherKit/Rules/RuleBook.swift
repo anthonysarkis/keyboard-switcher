@@ -46,13 +46,13 @@ public final class RuleBook {
         edit { editedRules in change(&editedRules.preferences) }
     }
 
-    func load(availableKeyboardIDs: Set<String>) {
+    func load() {
         do {
             if let savedRules = try store.load() {
                 rules = savedRules
             } else {
                 startedWithoutRulesFile = true
-                rules = StarterRules.make(availableKeyboardIDs: availableKeyboardIDs)
+                rules = RulesFile()
                 save()
             }
         } catch {
@@ -65,6 +65,10 @@ public final class RuleBook {
 
     func recordManualSwitch(keyboardID: String, in context: SwitchContext) {
         apply { editedRules in ManualSwitchPolicy.record(keyboardID: keyboardID, in: context, rules: &editedRules) }
+    }
+
+    func rememberKeyboardOnEntry(keyboardID: String, in context: SwitchContext) {
+        apply { editedRules in AppEntryPolicy.record(keyboardID: keyboardID, in: context, rules: &editedRules) }
     }
 
     private func edit(_ change: (inout RulesFile) -> Void) {

@@ -3,6 +3,8 @@ import Testing
 import KeyboardSwitcherCore
 
 struct RulesStoreTests {
+    private let canadian = "com.apple.keylayout.Canadian"
+    private let canadianCSA = "com.apple.keylayout.Canadian-CSA"
     private let folder = RulesStoreTests.makeTemporaryFolder()
     private var store: RulesStore {
         let fileURL = folder.appending(path: "rules.json")
@@ -20,10 +22,12 @@ struct RulesStoreTests {
     }
 
     @Test func savedRulesComeBackTheSame() throws {
-        var rules = StarterRules.make(availableKeyboardIDs: [StarterRules.canadianKeyboardID, StarterRules.canadianCSAKeyboardID])
-        rules.setWebsiteRule(website: "claude.ai", keyboardID: StarterRules.canadianKeyboardID)
-        rules.lastUsedByApp["com.apple.Notes"] = StarterRules.canadianCSAKeyboardID
+        let whatsAppRule = AppRule(bundleIdentifier: "net.whatsapp.WhatsApp", appName: "WhatsApp", keyboardID: canadianCSA)
+        var rules = RulesFile(appRules: [whatsAppRule])
+        rules.setWebsiteRule(website: "claude.ai", keyboardID: canadian)
+        rules.lastUsedByApp["com.apple.Notes"] = canadianCSA
         rules.preferences.remembersManualSwitches = false
+        rules.preferences.showBubble = true
 
         try store.save(rules)
 
