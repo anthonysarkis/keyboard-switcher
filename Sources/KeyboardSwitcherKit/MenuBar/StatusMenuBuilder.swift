@@ -22,6 +22,13 @@ final class StatusMenuBuilder {
         self.openSettings = openSettings
     }
 
+    func readTabForMenu() -> Task<Void, Never>? {
+        guard let frontApp = coordinator.frontAppOtherThanOurs,
+              SupportedBrowser.browser(bundleIdentifier: frontApp.bundleIdentifier) != nil
+        else { return nil }
+        return tabTracker.readNow()
+    }
+
     func rebuild(_ menu: NSMenu) {
         menu.removeAllItems()
         let sections = [websiteSection(), appSection(), appControlSection()]
@@ -43,7 +50,6 @@ final class StatusMenuBuilder {
               let browser = SupportedBrowser.browser(bundleIdentifier: frontApp.bundleIdentifier)
         else { return [] }
 
-        tabTracker.readNow()
         switch tabTracker.permissions[browser.bundleIdentifier] {
         case .asksFirstTime:
             let allowItem = MenuItemFactory.actionItem("Allow Website Rules in \(browser.name)…") { [tabTracker] in
@@ -88,7 +94,7 @@ final class StatusMenuBuilder {
                 ruleBook.setAppRule(bundleIdentifier: frontApp.bundleIdentifier, appName: frontApp.name, keyboardID: keyboard.id)
             }
         }
-        guard !ruleBook.rules.preferences.remembersManualSwitches else { return [header] + keyboardItems }
+        guard ruleBook.rules.preferences.appsRemembering != .everyOne else { return [header] + keyboardItems }
         let leaveAsIsItem = MenuItemFactory.actionItem("Leave as is", isChecked: appRule == nil) { [ruleBook] in
             ruleBook.removeAppRule(bundleIdentifier: frontApp.bundleIdentifier)
         }

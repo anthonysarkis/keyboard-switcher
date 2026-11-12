@@ -43,4 +43,16 @@ struct TestHarness {
     func waitForMacOSToSettle() async {
         await coordinator.settleCheck?.value
     }
+
+    func waitForTabRead() async {
+        await tabTracker.tabRead?.value
+    }
+
+    func waitForPatienceToRunOut() async {
+        await tabTracker.patienceCheck?.value
+    }
+
+    func waitForManualSwitch() async {
+        await coordinator.manualSwitchRecording?.value
+    }
 }

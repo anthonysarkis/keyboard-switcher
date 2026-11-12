@@ -50,7 +50,7 @@
 ## Extending
 
 - New kind of rule: a `KeyboardRuleSource` in `Resolution/`, listed in `RuleResolver.standard` at its priority.
-- New browser: one line in `SupportedBrowser.all`; its family picks the AppleScript.
+- New browser: one line in `SupportedBrowser.all`; its family picks the Apple Event codes (`TabAddressCodes`, from the browser's `sdef`).
 - New settings tab: a view in `Settings/`, listed in `SettingsWindowController.tabs`.
 - New setting: a row in General's one list (one `Section`, never groups); an on/off choice is a switch, and if its effect isn't obvious, a second `Text` in its label says what happens, one sentence per line.
 - New macOS connection: a protocol plus a live class in `AppServices.live`, and a fake in `KeyboardSwitcherFakes`.
@@ -60,8 +60,13 @@
 - Keyboard change notices need `.deliverImmediately`; a menu bar app is never active, so macOS would hold them.
 - Always sign with the same identity, or macOS forgets the browsers' "Allow": the build script picks Developer ID first, then Apple Development, then ad hoc (`SIGNING_IDENTITY` overrides).
 - `syspolicy_check notary-submission` rejects every app Apple hasn't notarized yet ("Gatekeeper rejected this file"), so the release script relies on the notary service's own log instead.
-- Never let a tab read trigger macOS's "allow" question: reads time out after 1 second, which closes the question, and the next read opens a new one. Ask with `BrowserTabTracker.requestPermission` (off the main thread, one at a time) and read tabs only when allowed.
-- Tabs are read only while a website rule exists, or once when the badge menu opens in a browser.
+- Never let a tab read open macOS's "allow" question: the read times out after 1 second, which closes it, and the next read opens a new one. Reads send `kAEDoNotPromptForUserConsent`; ask with `BrowserTabTracker.requestPermission` (off the main thread, one at a time) and read tabs only when allowed.
+- Tabs are read only when needed: twice a second while `RuleBook.needsTabAddresses` (a website rule exists, or « Every site you visit »), once at each switch by hand in a browser, and once when the badge menu opens in one.
+- Tab reads never run on the main thread: `AppleEventTabReader` sends the Apple Event from a background queue, so a frozen browser can't freeze the app.
+- Entering a browser waits up to `firstTabReadPatience` (0.2 s) for the first read, so it switches once, straight to the site's keyboard. Past that, the app rule applies and the late answer still switches to the site.
+- `BrowserTabTracker.track` counts each start (`trackingCount`): an answer from a browser you already left is dropped.
+- The badge menu rebuilds when its tab read lands, if it is still open (`StatusItemController.isMenuShowing`).
+- In zsh, `log` is a built-in: read the app's log with `/usr/bin/log show --predicate 'process == "KeyboardSwitcher"'`.
 - Right after a switch, macOS can put back the previous app's keyboard for 20 to 60 ms: `ManualSwitchDetector` ignores changes for 600 ms after each switch, then the coordinator re-selects once if needed.
 - `RuleBook.recordManualSwitch` must not announce an edit, or the app's rule would undo the switch you just made.
 - Safari in /Applications is a symlink: resolve it before asking for its icon, or the icon gets an alias arrow.
@@ -73,7 +78,10 @@
 - If a macOS update removes that drawer, `DrawnBadgeImages` takes over with the measured look: 22 × 16 pt, 5 pt corners, SF semibold 11 pt, narrowed (wdth 65, opsz 16) when the letters don't fit.
 - `swift run keyboard-switcher-dev badges` says whether macOS still draws them and how far the fallback is (CSA identical, CA about 0.1 pt to the left).
 - New users start with an empty list. `SampleRules` in `KeyboardSwitcherFakes` (WhatsApp, VS Code, Ghostty) is test and preview data only: never ship it as a starting list.
-- An app outside the list joins it with the keyboard it had when it first comes to the front (`AppEntryPolicy`: regular apps only, while remembering is on). During a switch's settle window that is the keyboard being switched to, not the one macOS briefly puts back. A switch by hand in an app outside the list adds it too.
+- Settings › General has two « Remember » menus with the same 3 choices (`RememberingMode`): every one / ones you switch language on / only ones you add. Defaults: « Every app you open » and « Sites you switch language on ». Older files' on/off switch maps to those defaults (off → only ones you add).
+- An app outside the list joins it with the keyboard it had when it first comes to the front (`AppEntryPolicy`: regular apps only, « Every app you open »). During a switch's settle window that is the keyboard being switched to, not the one macOS briefly puts back. A switch by hand adds an app too, unless « Only apps you add ».
+- A switch by hand on a site adds or updates that site (`ManualSwitchPolicy`), never the browser, unless « Only sites you add ». The coordinator reads the tab fresh at that moment and records once the answer lands (`manualSwitchRecording`): when the app isn't following tabs, its last known site can be stale. If the browser hasn't been asked yet, it asks and keeps that first pick for the browser, so the answer can't undo it.
+- « Every site you visit » (`WebsiteVisitPolicy`) is the only choice that follows tabs without website rules (`RuleBook.needsTabAddresses`).
 - There is one list: older files' hidden `lastUsedByApp` memory moves into it when the file opens (`moveRememberedAppsIntoTheList`), and nothing writes that memory any more.
 - The Apps and Websites tabs have a fixed height and scroll (`settingsListTabFrame`), so adding or removing a row animates in place and never resizes the window; README pictures set `fitsSettingsListsToContent` to size those tabs to their rows.
 - Both lists show A→Z (`appRulesByName`, `websiteRulesByAddress`), with their add button on top; rules.json keeps the order they were added.

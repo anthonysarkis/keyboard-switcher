@@ -10,6 +10,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let catalog: KeyboardCatalog
     private let menuBuilder: StatusMenuBuilder
     private let statusItem: NSStatusItem
+    private var isMenuShowing = false
 
     init(catalog: KeyboardCatalog, menuBuilder: StatusMenuBuilder) {
         self.catalog = catalog
@@ -21,7 +22,19 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        isMenuShowing = true
+        let tabRead = menuBuilder.readTabForMenu()
         menuBuilder.rebuild(menu)
+        guard let tabRead else { return }
+        Task { [weak self] in
+            await tabRead.value
+            guard let self, self.isMenuShowing else { return }
+            self.menuBuilder.rebuild(menu)
+        }
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        isMenuShowing = false
     }
 
     private func makeMenu() -> NSMenu {

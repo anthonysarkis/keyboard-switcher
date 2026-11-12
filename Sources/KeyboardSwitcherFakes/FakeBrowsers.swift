@@ -6,14 +6,28 @@ public final class FakeBrowsers: BrowserTabReading, BrowserPermissionChecking {
     public var answerToPermissionQuestion = BrowserPermission.allowed
     public private(set) var permissionQuestionsAsked: [String] = []
     public private(set) var tabReadCount = 0
+    public var holdsAnswers = false
+    private var heldAnswers: [CheckedContinuation<Void, Never>] = []
 
     public init(tabAddresses: [String: String] = [:], permissions: [String: BrowserPermission] = [:]) {
         self.tabAddresses = tabAddresses
         self.permissions = permissions
     }
 
-    public func currentTabAddress(in browser: SupportedBrowser) -> TabAddressResult {
+    public func releaseAnswers() {
+        holdsAnswers = false
+        let waitingAnswers = heldAnswers
+        heldAnswers = []
+        for waitingAnswer in waitingAnswers {
+            waitingAnswer.resume()
+        }
+    }
+
+    public func currentTabAddress(in browser: SupportedBrowser) async -> TabAddressResult {
         tabReadCount += 1
+        if holdsAnswers {
+            await withCheckedContinuation { waitingAnswer in heldAnswers.append(waitingAnswer) }
+        }
         if permissions[browser.bundleIdentifier] == .denied {
             return .denied
         }

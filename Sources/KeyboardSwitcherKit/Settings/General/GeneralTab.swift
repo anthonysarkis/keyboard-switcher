@@ -16,9 +16,15 @@ public struct GeneralTab: View {
                 Toggle("Open at login", isOn: launchAtLoginBinding)
                 Toggle("Show a bubble when it switches", isOn: bubbleBinding)
                 Toggle("Show the Mac's own keyboard icon", isOn: macKeyboardIconBinding)
-                Toggle(isOn: remembersManualSwitchesBinding) {
-                    Text("Remember each app's keyboard")
-                    Text("Each app gets back the keyboard it had last time, including one you pick with Control-Space or \(globeKey).\nWhen off, the keyboard changes only for apps and websites in your list.")
+                Picker("Remember apps", selection: appsRememberingBinding) {
+                    Text("Every app you open").tag(RememberingMode.everyOne)
+                    Text("Apps you switch language on").tag(RememberingMode.switchedByHand)
+                    Text("Only apps you add").tag(RememberingMode.addedByYou)
+                }
+                Picker("Remember websites", selection: websitesRememberingBinding) {
+                    Text("Every site you visit").tag(RememberingMode.everyOne)
+                    Text("Sites you switch language on").tag(RememberingMode.switchedByHand)
+                    Text("Only sites you add").tag(RememberingMode.addedByYou)
                 }
             }
         }
@@ -48,16 +54,17 @@ public struct GeneralTab: View {
         )
     }
 
-    private var globeKey: Image {
-        Image(systemName: "globe")
+    private var appsRememberingBinding: Binding<RememberingMode> {
+        Binding(
+            get: { ruleBook.rules.preferences.appsRemembering },
+            set: { mode in ruleBook.updatePreferences { preferences in preferences.appsRemembering = mode } }
+        )
     }
 
-    private var remembersManualSwitchesBinding: Binding<Bool> {
+    private var websitesRememberingBinding: Binding<RememberingMode> {
         Binding(
-            get: { ruleBook.rules.preferences.remembersManualSwitches },
-            set: { remembers in
-                ruleBook.updatePreferences { preferences in preferences.remembersManualSwitches = remembers }
-            }
+            get: { ruleBook.rules.preferences.websitesRemembering },
+            set: { mode in ruleBook.updatePreferences { preferences in preferences.websitesRemembering = mode } }
         )
     }
 }

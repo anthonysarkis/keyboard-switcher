@@ -1,3 +1,3 @@
-public protocol BrowserTabReading: AnyObject {
-    func currentTabAddress(in browser: SupportedBrowser) -> TabAddressResult
+public protocol BrowserTabReading: AnyObject, Sendable {
+    func currentTabAddress(in browser: SupportedBrowser) async -> TabAddressResult
 }

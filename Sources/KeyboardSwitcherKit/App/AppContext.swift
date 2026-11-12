@@ -11,7 +11,8 @@ public final class AppContext {
         let tabTracker = BrowserTabTracker(
             tabReader: services.tabReader,
             permissionChecker: services.permissionChecker,
-            checkInterval: services.browserCheckInterval
+            checkInterval: services.browserCheckInterval,
+            firstReadPatience: services.firstTabReadPatience
         )
         let manualSwitchDetector = ManualSwitchDetector(settleDuration: services.settleDuration)
         let coordinator = SwitchCoordinator(

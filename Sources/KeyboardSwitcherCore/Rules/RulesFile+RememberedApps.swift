@@ -4,7 +4,7 @@ extension RulesFile {
     public mutating func moveRememberedAppsIntoTheList(appNameFor: (String) -> String?) {
         let rememberedApps = lastUsedByApp
         lastUsedByApp = [:]
-        guard preferences.remembersManualSwitches else { return }
+        guard preferences.appsRemembering != .addedByYou else { return }
 
         let movedRules = rememberedApps.compactMap { bundleIdentifier, keyboardID -> AppRule? in
             guard appRule(for: bundleIdentifier) == nil, let appName = appNameFor(bundleIdentifier) else { return nil }

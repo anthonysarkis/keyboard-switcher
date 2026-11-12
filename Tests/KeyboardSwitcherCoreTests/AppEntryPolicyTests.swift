@@ -7,14 +7,14 @@ struct AppEntryPolicyTests {
     private let whatsAppContext = SwitchContext(bundleIdentifier: "net.whatsapp.WhatsApp")
     private let notesContext = SwitchContext(bundleIdentifier: "com.apple.Notes")
 
-    private func rules(remembersManualSwitches: Bool) -> RulesFile {
+    private func rules(appsRemembering: RememberingMode) -> RulesFile {
         let whatsAppRule = AppRule(bundleIdentifier: "net.whatsapp.WhatsApp", appName: "WhatsApp", keyboardID: canadianCSA)
-        let preferences = Preferences(remembersManualSwitches: remembersManualSwitches)
+        let preferences = Preferences(appsRemembering: appsRemembering)
         return RulesFile(appRules: [whatsAppRule], preferences: preferences)
     }
 
     @Test func aNewAppJoinsTheListWithTheKeyboardItWasOpenedWith() {
-        var rules = rules(remembersManualSwitches: true)
+        var rules = rules(appsRemembering: .everyOne)
 
         AppEntryPolicy.record(keyboardID: canadian, appName: "Notes", in: notesContext, rules: &rules)
 
@@ -23,7 +23,7 @@ struct AppEntryPolicyTests {
     }
 
     @Test func anAppInTheListKeepsItsKeyboard() {
-        var rules = rules(remembersManualSwitches: true)
+        var rules = rules(appsRemembering: .everyOne)
         let rulesBefore = rules
 
         AppEntryPolicy.record(keyboardID: canadian, appName: "WhatsApp", in: whatsAppContext, rules: &rules)
@@ -31,8 +31,9 @@ struct AppEntryPolicyTests {
         #expect(rules == rulesBefore)
     }
 
-    @Test func nothingJoinsTheListWhenRememberingIsOff() {
-        var rules = rules(remembersManualSwitches: false)
+    @Test(arguments: [RememberingMode.switchedByHand, .addedByYou])
+    func openingAnAppAddsNothingUnlessEveryAppIsRemembered(appsRemembering: RememberingMode) {
+        var rules = rules(appsRemembering: appsRemembering)
         let rulesBefore = rules
 
         AppEntryPolicy.record(keyboardID: canadian, appName: "Notes", in: notesContext, rules: &rules)

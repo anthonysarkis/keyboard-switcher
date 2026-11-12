@@ -12,7 +12,8 @@ extension AppServices {
         rulesStore: RulesStore,
         loginItem: FakeLoginItem = FakeLoginItem(isEnabled: false),
         macKeyboardIcon: FakeMacKeyboardIcon = FakeMacKeyboardIcon(isShown: true),
-        settleDuration: Duration = .milliseconds(5)
+        settleDuration: Duration = .milliseconds(5),
+        firstTabReadPatience: Duration = .milliseconds(50)
     ) -> AppServices {
         let badgeImageMaker = DrawnBadgeImages()
         return AppServices(
@@ -27,7 +28,8 @@ extension AppServices {
             installedAppName: { bundleIdentifier in fakeInstalledAppNames[bundleIdentifier] },
             ownBundleIdentifier: fakeOwnBundleIdentifier,
             settleDuration: settleDuration,
-            browserCheckInterval: 0.5
+            browserCheckInterval: 0.5,
+            firstTabReadPatience: firstTabReadPatience
         )
     }
 }

@@ -15,8 +15,8 @@ public final class RuleBook {
         self.installedAppName = installedAppName
     }
 
-    public var hasWebsiteRules: Bool {
-        !rules.websiteRules.isEmpty
+    public var needsTabAddresses: Bool {
+        !rules.websiteRules.isEmpty || rules.preferences.websitesRemembering == .everyOne
     }
 
     public func setAppRule(bundleIdentifier: String, appName: String, keyboardID: String) {
@@ -72,6 +72,10 @@ public final class RuleBook {
 
     func rememberKeyboardOnEntry(keyboardID: String, appName: String, in context: SwitchContext) {
         apply { editedRules in AppEntryPolicy.record(keyboardID: keyboardID, appName: appName, in: context, rules: &editedRules) }
+    }
+
+    func rememberWebsiteOnVisit(keyboardID: String, in context: SwitchContext) {
+        apply { editedRules in WebsiteVisitPolicy.record(keyboardID: keyboardID, in: context, rules: &editedRules) }
     }
 
     private func moveRememberedAppsIntoTheList() {

@@ -5,6 +5,7 @@ import KeyboardSwitcherCore
 public final class SwitchCoordinator {
     public private(set) var frontApp: AppIdentity?
     public let ownBundleIdentifier: String
+    @ObservationIgnored private(set) var manualSwitchRecording: Task<Void, Never>?
 
     private let catalog: KeyboardCatalog
     private let ruleBook: RuleBook
@@ -59,7 +60,7 @@ public final class SwitchCoordinator {
     private func connectEvents() {
         catalog.observeChanges { [weak self] in self?.keyboardSelectionDidChange() }
         ruleBook.onEdit = { [weak self] in self?.rulesWereEdited() }
-        tabTracker.onWebsiteChange = { [weak self] in self?.applyRules(showsBubble: true) }
+        tabTracker.onWebsiteChange = { [weak self] in self?.websiteDidChange() }
         manualSwitchDetector.onSettled = { [weak self] settledKeyboardID in self?.restoreIfMacOSChanged(settledKeyboardID) }
     }
 
@@ -68,21 +69,40 @@ public final class SwitchCoordinator {
         let browser = frontAppOtherThanOurs.flatMap { otherApp in
             SupportedBrowser.browser(bundleIdentifier: otherApp.bundleIdentifier)
         }
-        tabTracker.track(browser, needsTabAddresses: ruleBook.hasWebsiteRules, mayAsk: true)
+        tabTracker.track(browser, needsTabAddresses: ruleBook.needsTabAddresses, mayAsk: true) { [weak self] in
+            self?.finishEntering(showsBubble: showsBubble)
+        }
+    }
+
+    private func finishEntering(showsBubble: Bool) {
         guard let otherApp = frontAppOtherThanOurs else { return }
 
         Log.switching.notice("In front: \(otherApp.bundleIdentifier, privacy: .public)")
         applyRules(showsBubble: showsBubble)
-        rememberKeyboardWhenNothingApplies()
+        rememberNewWebsite()
+        rememberNewApp()
     }
 
-    private func rememberKeyboardWhenNothingApplies() {
+    private func websiteDidChange() {
+        applyRules(showsBubble: true)
+        rememberNewWebsite()
+    }
+
+    private var enteredKeyboardID: String? {
+        manualSwitchDetector.settlingKeyboardID ?? catalog.readCurrentKeyboardID()
+    }
+
+    private func rememberNewWebsite() {
+        guard let context = currentContext, context.website != nil, let keyboardID = enteredKeyboardID else { return }
+        ruleBook.rememberWebsiteOnVisit(keyboardID: keyboardID, in: context)
+    }
+
+    private func rememberNewApp() {
         guard let frontApp = frontAppOtherThanOurs, frontApp.isRegularApp,
-              let context = currentContext, ruleDecision(for: context) == nil
+              let context = currentContext, ruleDecision(for: context) == nil,
+              let keyboardID = enteredKeyboardID
         else { return }
-        let enteredKeyboardID = manualSwitchDetector.settlingKeyboardID ?? catalog.readCurrentKeyboardID()
-        guard let enteredKeyboardID else { return }
-        ruleBook.rememberKeyboardOnEntry(keyboardID: enteredKeyboardID, appName: frontApp.name, in: context)
+        ruleBook.rememberKeyboardOnEntry(keyboardID: keyboardID, appName: frontApp.name, in: context)
     }
 
     private func ruleDecision(for context: SwitchContext) -> KeyboardDecision? {
@@ -90,19 +110,45 @@ public final class SwitchCoordinator {
     }
 
     private func rulesWereEdited() {
-        tabTracker.updateNeedsTabAddresses(ruleBook.hasWebsiteRules)
-        applyRules(showsBubble: false)
+        tabTracker.updateNeedsTabAddresses(ruleBook.needsTabAddresses) { [weak self] in
+            self?.applyRules(showsBubble: false)
+        }
     }
 
     private func keyboardSelectionDidChange() {
         guard let selectedKeyboardID = catalog.readCurrentKeyboardID(),
               manualSwitchDetector.isManualChange(to: selectedKeyboardID),
-              let frontApp = frontAppOtherThanOurs,
-              let context = currentContext
+              let frontApp = frontAppOtherThanOurs
         else { return }
 
-        Log.switching.notice("Switched by hand to \(selectedKeyboardID, privacy: .public) in \(context.bundleIdentifier, privacy: .public)")
-        ruleBook.recordManualSwitch(keyboardID: selectedKeyboardID, appName: frontApp.name, in: context)
+        let browser = SupportedBrowser.browser(bundleIdentifier: frontApp.bundleIdentifier)
+        let remembersWebsites = ruleBook.rules.preferences.websitesRemembering != .addedByYou
+        guard let browser, remembersWebsites else {
+            recordManualSwitch(to: selectedKeyboardID, in: frontApp, website: tabTracker.currentWebsite)
+            return
+        }
+
+        guard let freshRead = tabTracker.readNow() else {
+            if tabTracker.permissions[browser.bundleIdentifier] == .asksFirstTime {
+                tabTracker.requestPermission(for: browser)
+            }
+            recordManualSwitch(to: selectedKeyboardID, in: frontApp, website: nil)
+            return
+        }
+        manualSwitchRecording = Task { [weak self] in
+            await freshRead.value
+            guard let self, self.frontAppOtherThanOurs == frontApp else { return }
+            self.recordManualSwitch(to: selectedKeyboardID, in: frontApp, website: self.tabTracker.currentWebsite)
+        }
+    }
+
+    private func recordManualSwitch(to keyboardID: String, in app: AppIdentity, website: String?) {
+        let context = SwitchContext(bundleIdentifier: app.bundleIdentifier, website: website)
+        let neededTabAddresses = ruleBook.needsTabAddresses
+        Log.switching.notice("Switched by hand to \(keyboardID, privacy: .public) in \(app.bundleIdentifier, privacy: .public)")
+        ruleBook.recordManualSwitch(keyboardID: keyboardID, appName: app.name, in: context)
+        guard ruleBook.needsTabAddresses != neededTabAddresses else { return }
+        tabTracker.updateNeedsTabAddresses(ruleBook.needsTabAddresses) {}
     }
 
     private func applyRules(showsBubble: Bool) {

@@ -202,7 +202,7 @@ flowchart TD
 ```
 
 1. `NSWorkspace` says which app came to the front.
-2. In a browser, Apple Events read the tab's address twice a second, only while you have a website rule.
+2. In a browser, Apple Events read the tab's address in the background: twice a second while you have a website rule, and once when you switch language by hand.
 3. `TISSelectInputSource` switches the keyboard.
 4. The badge comes from `KLInputSourceIconManager`, the class behind the Mac's own input menu; if a macOS update removes it, the app draws the same badge itself.
 
@@ -221,12 +221,12 @@ Website rules don't: Firefox doesn't share the tab's address with other apps.
 
 **Accessibility or Screen Recording access?**
 No.
-It only asks to read the current tab, browser by browser, once you add a website rule.
+It only asks to read the current tab, browser by browser, the first time it needs the website (for example, the first time you switch language there).
 
 **Will it fight me when I switch by hand?**
 No.
 It remembers your pick: that app or website gets it back next time.
-Turn off "Remember each app's keyboard" in Settings › General, and only your rules switch the keyboard.
+Pick "Only apps you add" and "Only sites you add" in Settings › General, and only your list switches the keyboard.
 
 </details>
 

@@ -1,16 +1,19 @@
 public enum ManualSwitchPolicy {
     public static func record(keyboardID: String, appName: String, in context: SwitchContext, rules: inout RulesFile) {
-        guard rules.preferences.remembersManualSwitches else { return }
-
-        let websiteRule = context.website.flatMap { website in
-            WebsiteRuleMatcher.bestRule(for: website, in: rules.websiteRules)
+        if let website = context.website {
+            let matchingRule = WebsiteRuleMatcher.bestRule(for: website, in: rules.websiteRules)
+            switch rules.preferences.websitesRemembering {
+            case .everyOne, .switchedByHand:
+                let rememberedWebsite = matchingRule?.website ?? website
+                rules.setWebsiteRule(website: rememberedWebsite, keyboardID: keyboardID)
+                return
+            case .addedByYou:
+                guard matchingRule == nil else { return }
+            }
         }
 
-        if let websiteRule {
-            rules.setWebsiteRule(website: websiteRule.website, keyboardID: keyboardID)
-        } else {
-            let listedName = rules.appRule(for: context.bundleIdentifier)?.appName ?? appName
-            rules.setAppRule(bundleIdentifier: context.bundleIdentifier, appName: listedName, keyboardID: keyboardID)
-        }
+        guard rules.preferences.appsRemembering != .addedByYou else { return }
+        let listedName = rules.appRule(for: context.bundleIdentifier)?.appName ?? appName
+        rules.setAppRule(bundleIdentifier: context.bundleIdentifier, appName: listedName, keyboardID: keyboardID)
     }
 }

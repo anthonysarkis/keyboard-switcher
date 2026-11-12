@@ -54,8 +54,7 @@ struct SwitchCoordinatorTests {
     }
 
     @Test func itsOwnSwitchIsNotMistakenForOneByHand() throws {
-        var rules = TestHarness.sampleRules()
-        rules.preferences.remembersManualSwitches = true
+        let rules = TestHarness.sampleRules()
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.coordinator.start(frontApp: TestHarness.ghostty)
 
@@ -65,8 +64,7 @@ struct SwitchCoordinatorTests {
     }
 
     @Test func macOSPuttingBackThePreviousKeyboardRightAfterASwitchIsUndone() async throws {
-        var rules = TestHarness.sampleRules()
-        rules.preferences.remembersManualSwitches = true
+        let rules = TestHarness.sampleRules()
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.coordinator.start(frontApp: TestHarness.ghostty)
 
@@ -117,6 +115,19 @@ struct SwitchCoordinatorTests {
         #expect(harness.keyboardSystem.currentID == canadianCSA)
     }
 
+    @Test func appsYouSwitchOnJoinOnlyOnceYouSwitch() throws {
+        var rules = TestHarness.sampleRules()
+        rules.preferences.appsRemembering = .switchedByHand
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.coordinator.start(frontApp: TestHarness.notes)
+        let notesRuleAfterOpening = harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier)
+
+        harness.keyboardSystem.switchByHand(to: canadianCSA)
+
+        #expect(notesRuleAfterOpening == nil)
+        #expect(harness.ruleBook.rules.appRule(for: TestHarness.notes.bundleIdentifier)?.keyboardID == canadianCSA)
+    }
+
     @Test func appWithoutARuleRemembersTheKeyboardPickedByHand() throws {
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: TestHarness.sampleRules())
         harness.coordinator.start(frontApp: TestHarness.notes)
@@ -131,7 +142,7 @@ struct SwitchCoordinatorTests {
 
     @Test func appWithoutARuleChangesNothingWhenSwitchesByHandAreNotRemembered() throws {
         var rules = TestHarness.sampleRules()
-        rules.preferences.remembersManualSwitches = false
+        rules.preferences.appsRemembering = .addedByYou
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.coordinator.start(frontApp: TestHarness.notes)
 
@@ -145,7 +156,7 @@ struct SwitchCoordinatorTests {
 
     @Test func backToTheListKeyboardNextTimeWhenSwitchesByHandAreNotRemembered() async throws {
         var rules = TestHarness.sampleRules()
-        rules.preferences.remembersManualSwitches = false
+        rules.preferences.appsRemembering = .addedByYou
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.coordinator.start(frontApp: TestHarness.whatsApp)
         await harness.waitForMacOSToSettle()
@@ -159,8 +170,7 @@ struct SwitchCoordinatorTests {
     }
 
     @Test func aRememberedSwitchByHandBecomesTheListKeyboard() async throws {
-        var rules = TestHarness.sampleRules()
-        rules.preferences.remembersManualSwitches = true
+        let rules = TestHarness.sampleRules()
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.coordinator.start(frontApp: TestHarness.whatsApp)
         await harness.waitForMacOSToSettle()

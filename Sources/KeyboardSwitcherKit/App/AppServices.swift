@@ -4,6 +4,7 @@ import KeyboardSwitcherCore
 public struct AppServices {
     private static let macOSSettleDuration: Duration = .milliseconds(600)
     private static let browserTabCheckInterval: TimeInterval = 0.5
+    private static let firstTabReadPatience: Duration = .milliseconds(200)
 
     public var keyboardSystem: any KeyboardSystem
     public var badgeImageMaker: any BadgeImageMaking
@@ -17,6 +18,7 @@ public struct AppServices {
     public var ownBundleIdentifier: String
     public var settleDuration: Duration
     public var browserCheckInterval: TimeInterval
+    public var firstTabReadPatience: Duration
 
     public init(
         keyboardSystem: any KeyboardSystem,
@@ -30,7 +32,8 @@ public struct AppServices {
         installedAppName: @escaping (String) -> String?,
         ownBundleIdentifier: String,
         settleDuration: Duration,
-        browserCheckInterval: TimeInterval
+        browserCheckInterval: TimeInterval,
+        firstTabReadPatience: Duration
     ) {
         self.keyboardSystem = keyboardSystem
         self.badgeImageMaker = badgeImageMaker
@@ -44,6 +47,7 @@ public struct AppServices {
         self.ownBundleIdentifier = ownBundleIdentifier
         self.settleDuration = settleDuration
         self.browserCheckInterval = browserCheckInterval
+        self.firstTabReadPatience = firstTabReadPatience
     }
 
     public static func live(bundleIdentifier: String) -> AppServices {
@@ -51,7 +55,7 @@ public struct AppServices {
         let rulesStore = RulesStore(fileURL: rulesFileURL)
         let keyboardSystem = TextInputSources()
         let badgeImageMaker = liveBadgeImageMaker()
-        let tabReader = AppleScriptTabReader()
+        let tabReader = AppleEventTabReader()
         let permissionChecker = AutomationPermissionChecker()
         let bubble = SwitchBubblePanel()
         let loginItem = MainAppLoginItem()
@@ -68,7 +72,8 @@ public struct AppServices {
             installedAppName: { bundleIdentifier in InstalledApps.name(for: bundleIdentifier) },
             ownBundleIdentifier: bundleIdentifier,
             settleDuration: macOSSettleDuration,
-            browserCheckInterval: browserTabCheckInterval
+            browserCheckInterval: browserTabCheckInterval,
+            firstTabReadPatience: firstTabReadPatience
         )
     }
 

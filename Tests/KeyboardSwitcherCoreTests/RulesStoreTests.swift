@@ -26,7 +26,8 @@ struct RulesStoreTests {
         var rules = RulesFile(appRules: [whatsAppRule])
         rules.setWebsiteRule(website: "claude.ai", keyboardID: canadian)
         rules.lastUsedByApp["com.apple.Notes"] = canadianCSA
-        rules.preferences.remembersManualSwitches = false
+        rules.preferences.appsRemembering = .switchedByHand
+        rules.preferences.websitesRemembering = .everyOne
         rules.preferences.showBubble = true
 
         try store.save(rules)
@@ -53,7 +54,7 @@ struct RulesStoreTests {
 
         let rules = try #require(try store.load())
 
-        #expect(rules.preferences == Preferences(showBubble: false, remembersManualSwitches: true))
+        #expect(rules.preferences == Preferences(showBubble: false))
     }
 
     @Test func unreadableFileCanBeMovedAside() throws {

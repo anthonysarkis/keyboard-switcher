@@ -6,9 +6,9 @@ struct RememberedAppsTests {
     private let canadianCSA = "com.apple.keylayout.Canadian-CSA"
     private let installedAppNames = ["com.apple.Safari": "Safari", "com.apple.Notes": "Notes"]
 
-    private func rules(remembersManualSwitches: Bool) -> RulesFile {
+    private func rules(appsRemembering: RememberingMode) -> RulesFile {
         let whatsAppRule = AppRule(bundleIdentifier: "net.whatsapp.WhatsApp", appName: "WhatsApp", keyboardID: canadianCSA)
-        let preferences = Preferences(remembersManualSwitches: remembersManualSwitches)
+        let preferences = Preferences(appsRemembering: appsRemembering)
         var rules = RulesFile(appRules: [whatsAppRule], preferences: preferences)
         rules.lastUsedByApp = [
             "com.apple.Safari": canadianCSA,
@@ -20,7 +20,7 @@ struct RememberedAppsTests {
     }
 
     @Test func rememberedAppsJoinTheListByNameAndTheMemoryEmpties() {
-        var rules = rules(remembersManualSwitches: true)
+        var rules = rules(appsRemembering: .everyOne)
 
         rules.moveRememberedAppsIntoTheList { bundleIdentifier in installedAppNames[bundleIdentifier] }
 
@@ -31,7 +31,7 @@ struct RememberedAppsTests {
     }
 
     @Test func nothingJoinsTheListWhenRememberingIsOff() {
-        var rules = rules(remembersManualSwitches: false)
+        var rules = rules(appsRemembering: .addedByYou)
 
         rules.moveRememberedAppsIntoTheList { bundleIdentifier in installedAppNames[bundleIdentifier] }
 

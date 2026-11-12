@@ -15,7 +15,7 @@ struct WebsiteRulesInBrowsersTests {
         return rules
     }
 
-    @Test func websiteRuleWinsInABrowserAndFollowsTabChanges() throws {
+    @Test func websiteRuleWinsInABrowserAndFollowsTabChanges() async throws {
         let rules = rulesWithWhatsAppWeb()
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
         harness.browsers.permissions[chromeBundleIdentifier] = .allowed
@@ -23,16 +23,77 @@ struct WebsiteRulesInBrowsersTests {
         harness.coordinator.start(frontApp: TestHarness.ghostty)
 
         harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        await harness.waitForTabRead()
         #expect(harness.tabTracker.currentWebsite == "web.whatsapp.com")
         #expect(harness.keyboardSystem.currentID == canadianCSA)
 
         harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
-        harness.tabTracker.readNow()
-        harness.tabTracker.onWebsiteChange?()
+        await harness.tabTracker.readNow()?.value
         #expect(harness.keyboardSystem.currentID == canadian)
     }
 
-    @Test func browserOpenedOnAWebsiteWithARuleRemembersNothing() throws {
+    @Test func enteringABrowserGoesStraightToTheSiteKeyboard() async throws {
+        var rules = TestHarness.sampleRules()
+        rules.setAppRule(bundleIdentifier: chromeBundleIdentifier, appName: TestHarness.chrome.name, keyboardID: canadianCSA)
+        rules.setWebsiteRule(website: "github.com", keyboardID: canadian)
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+        let selectionsBefore = harness.keyboardSystem.selections
+
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        await harness.waitForTabRead()
+
+        #expect(harness.keyboardSystem.selections == selectionsBefore)
+        #expect(harness.keyboardSystem.currentID == canadian)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aFrozenBrowserNeverHoldsTheAppUp() async throws {
+        var rules = TestHarness.sampleRules()
+        rules.setAppRule(bundleIdentifier: chromeBundleIdentifier, appName: TestHarness.chrome.name, keyboardID: canadianCSA)
+        rules.setWebsiteRule(website: "github.com", keyboardID: canadian)
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
+        harness.browsers.holdsAnswers = true
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        let keyboardRightAfterEntering = harness.keyboardSystem.currentID
+        await harness.waitForPatienceToRunOut()
+        let keyboardOncePatienceRanOut = harness.keyboardSystem.currentID
+        harness.browsers.releaseAnswers()
+        await harness.waitForTabRead()
+
+        #expect(keyboardRightAfterEntering == canadian)
+        #expect(keyboardOncePatienceRanOut == canadianCSA)
+        #expect(harness.tabTracker.currentWebsite == "github.com")
+        #expect(harness.keyboardSystem.currentID == canadian)
+    }
+
+    @Test func aLateAnswerFromABrowserYouLeftChangesNothing() async throws {
+        let rules = rulesWithWhatsAppWeb()
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://web.whatsapp.com/"
+        harness.browsers.holdsAnswers = true
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        let lateRead = harness.tabTracker.tabRead
+        harness.coordinator.frontAppDidChange(to: TestHarness.ghostty)
+        harness.browsers.releaseAnswers()
+        await lateRead?.value
+
+        #expect(lateRead != nil)
+        #expect(harness.tabTracker.currentWebsite == nil)
+        #expect(harness.keyboardSystem.currentID == canadian)
+        #expect(harness.keyboardSystem.selections.isEmpty)
+    }
+
+    @Test func browserOpenedOnAWebsiteWithARuleRemembersNothing() async throws {
         var rules = TestHarness.sampleRules()
         rules.setWebsiteRule(website: "web.whatsapp.com", keyboardID: canadianCSA)
         let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
@@ -41,9 +102,58 @@ struct WebsiteRulesInBrowsersTests {
         harness.coordinator.start(frontApp: TestHarness.ghostty)
 
         harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        await harness.waitForTabRead()
 
         #expect(harness.keyboardSystem.currentID == canadianCSA)
         #expect(harness.ruleBook.rules.appRule(for: chromeBundleIdentifier) == nil)
+    }
+
+    @Test func aSiteYouSwitchOnJoinsTheWebsitesList() async throws {
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: TestHarness.sampleRules())
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        let tabReadsBeforeTheSwitch = harness.browsers.tabReadCount
+
+        harness.keyboardSystem.switchByHand(to: canadianCSA)
+        await harness.waitForManualSwitch()
+
+        let githubRule = harness.ruleBook.rules.websiteRules.first { websiteRule in websiteRule.website == "github.com" }
+        #expect(tabReadsBeforeTheSwitch == 0)
+        #expect(githubRule?.keyboardID == canadianCSA)
+        #expect(harness.ruleBook.rules.appRule(for: chromeBundleIdentifier)?.keyboardID == canadian)
+    }
+
+    @Test func everySiteYouVisitJoinsTheList() async throws {
+        var rules = TestHarness.sampleRules()
+        rules.preferences.websitesRemembering = .everyOne
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: rules)
+        harness.browsers.permissions[chromeBundleIdentifier] = .allowed
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
+        harness.coordinator.start(frontApp: TestHarness.ghostty)
+
+        harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
+        await harness.waitForTabRead()
+        harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://claude.ai/new"
+        await harness.tabTracker.readNow()?.value
+
+        #expect(harness.ruleBook.rules.websiteRules.map(\.website) == ["github.com", "claude.ai"])
+        #expect(harness.ruleBook.rules.appRule(for: chromeBundleIdentifier) == nil)
+    }
+
+    @Test func aSwitchInABrowserNotAllowedYetAsksAndKeepsYourPickForTheBrowser() async throws {
+        let harness = try TestHarness(currentKeyboardID: canadian, savedRules: TestHarness.sampleRules())
+        harness.browsers.permissions[chromeBundleIdentifier] = .asksFirstTime
+        harness.coordinator.start(frontApp: TestHarness.chrome)
+
+        harness.keyboardSystem.switchByHand(to: canadianCSA)
+        await harness.tabTracker.permissionQuestions[chromeBundleIdentifier]?.value
+
+        #expect(harness.browsers.permissionQuestionsAsked == [chromeBundleIdentifier])
+        #expect(harness.ruleBook.rules.appRule(for: chromeBundleIdentifier)?.keyboardID == canadianCSA)
+        #expect(harness.ruleBook.rules.websiteRules.isEmpty)
+        #expect(harness.keyboardSystem.currentID == canadianCSA)
     }
 
     @Test func asksEachBrowserOnceAndWaitsForTheAnswer() async throws {
@@ -57,6 +167,7 @@ struct WebsiteRulesInBrowsersTests {
         harness.coordinator.frontAppDidChange(to: TestHarness.ghostty)
         harness.coordinator.frontAppDidChange(to: TestHarness.chrome)
         await harness.tabTracker.permissionQuestions[chromeBundleIdentifier]?.value
+        await harness.waitForTabRead()
 
         #expect(harness.browsers.permissionQuestionsAsked == [chromeBundleIdentifier])
         #expect(harness.tabTracker.permissions[chromeBundleIdentifier] == .allowed)
@@ -75,25 +186,26 @@ struct WebsiteRulesInBrowsersTests {
         #expect(harness.browsers.tabReadCount == 0)
     }
 
-    @Test func readsTheTabOnlyWhenTheMenuNeedsItWhileThereAreNoWebsiteRules() throws {
+    @Test func readsTheTabOnlyWhenTheMenuNeedsItWhileThereAreNoWebsiteRules() async throws {
         let harness = try TestHarness(currentKeyboardID: canadian)
         harness.browsers.permissions[chromeBundleIdentifier] = .allowed
         harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://github.com/anthonysarkis"
         harness.coordinator.start(frontApp: TestHarness.chrome)
         #expect(harness.browsers.tabReadCount == 0)
 
-        harness.tabTracker.readNow()
+        await harness.tabTracker.readNow()?.value
 
         #expect(harness.tabTracker.currentWebsite == "github.com")
     }
 
-    @Test func firstWebsiteRuleStartsReadingTabsRightAway() throws {
+    @Test func firstWebsiteRuleStartsReadingTabsRightAway() async throws {
         let harness = try TestHarness(currentKeyboardID: canadian)
         harness.browsers.permissions[chromeBundleIdentifier] = .allowed
         harness.browsers.tabAddresses[chromeBundleIdentifier] = "https://web.whatsapp.com/"
         harness.coordinator.start(frontApp: TestHarness.chrome)
 
         harness.ruleBook.setWebsiteRule(website: "web.whatsapp.com", keyboardID: canadianCSA)
+        await harness.waitForTabRead()
 
         #expect(harness.tabTracker.currentWebsite == "web.whatsapp.com")
         #expect(harness.keyboardSystem.currentID == canadianCSA)
