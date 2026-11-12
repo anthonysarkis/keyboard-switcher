@@ -2,10 +2,6 @@ import AppKit
 import SwiftUI
 
 public final class SwitchBubblePanel: BubblePresenting {
-    private static let visibleDuration: Duration = .milliseconds(1200)
-    private static let fadeInDuration: TimeInterval = 0.12
-    private static let fadeOutDuration: TimeInterval = 0.25
-
     private var panel: NSPanel?
     private var hideTask: Task<Void, Never>?
 
@@ -30,7 +26,7 @@ public final class SwitchBubblePanel: BubblePresenting {
         bubblePanel.alphaValue = 0
         bubblePanel.orderFrontRegardless()
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = Self.fadeInDuration
+            context.duration = BubbleMetrics.fadeInDuration
             bubblePanel.animator().alphaValue = 1
         }
     }
@@ -38,7 +34,7 @@ public final class SwitchBubblePanel: BubblePresenting {
     private func scheduleFadeOut() {
         hideTask?.cancel()
         hideTask = Task { [weak self] in
-            try? await Task.sleep(for: Self.visibleDuration)
+            try? await Task.sleep(for: BubbleMetrics.visibleDuration)
             guard !Task.isCancelled else { return }
             self?.fadeOut()
         }
@@ -47,7 +43,7 @@ public final class SwitchBubblePanel: BubblePresenting {
     private func fadeOut() {
         guard let bubblePanel = panel else { return }
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = Self.fadeOutDuration
+            context.duration = BubbleMetrics.fadeOutDuration
             bubblePanel.animator().alphaValue = 0
         } completionHandler: {
             MainActor.assumeIsolated {

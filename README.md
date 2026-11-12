@@ -1,53 +1,69 @@
 <p align="center">
-  <img src="docs/images/icon.png" width="128" height="128" alt="Keyboard Switcher icon">
+  <img src="docs/images/icon.png" width="112" height="112" alt="Keyboard Switcher icon">
 </p>
 
 <h1 align="center">Keyboard Switcher</h1>
 
+<h3 align="center">Remembers the language you type in, for each app and each website.</h3>
+
 <p align="center">
-  <strong>The right keyboard in every app. Automatically.</strong><br>
-  A tiny Mac menu bar app for people who type in more than one language.
+  A tiny Mac menu bar app.
+  Change app or tab, and the right language is already on.
 </p>
 
 <p align="center">
-  <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-111111?logo=apple">
-  <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
-  <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-2EA44F">
-  <img alt="No network access" src="https://img.shields.io/badge/network-none-1F6FEB">
+  <kbd>macOS 14+</kbd>&nbsp;
+  <kbd>Swift 6</kbd>&nbsp;
+  <kbd>0 dependencies</kbd>&nbsp;
+  <kbd>No network</kbd>&nbsp;
+  <kbd>151 languages</kbd>
+</p>
+
+<br>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.svg">
+    <img src="docs/images/hero-light.svg" width="880" alt="Switching from VS Code to WhatsApp, Teams and Claude turns the keyboard into U.S., French, Spanish and Russian, and each message types right the first time">
+  </picture>
 </p>
 
 <p align="center">
-  <img src="docs/images/hero.png" width="880" alt="Teams gets Spanish, WhatsApp gets French, VS Code gets English and Claude Code gets Russian, and the menu bar badge follows">
+  <sub>Every key above comes from macOS's own layouts: U.S., French AZERTY, Spanish and Russian.</sub>
 </p>
 
-## What it does
+## Every app gets its keyboard.
 
-- 🪄 **Per app**: Teams in Spanish, WhatsApp in French, VS Code in English, Claude Code in Russian.
-- 🌍 **Per website**: `teams.microsoft.com` or `claude.ai` get their own keyboard in Chrome, Brave and Safari.
-- 🗣️ **Every language**: 151 languages and 285 keyboards, Japanese, Chinese and Korean included.
-- 🧠 **Remembers**: every app and website comes back on the last keyboard you picked in it.
-- 🍎 **Looks native**: the menu bar badge is drawn by macOS itself, pixel for pixel.
-- 🔒 **Private**: no network, no account, no analytics.
-- 🪶 **Tiny**: native Swift, zero dependencies, opens at login.
+VS Code in English. WhatsApp in French. Teams in Spanish. Claude in Russian.
+Switch apps with a click or <kbd>⌘</kbd> <kbd>Tab</kbd>, and the right keyboard is already on.
 
-## Set it once
+## Every website too.
 
-<table>
-  <tr>
-    <th>Apps</th>
-    <th>Websites</th>
-  </tr>
-  <tr>
-    <td valign="top"><img src="docs/images/settings-apps.png" width="420" alt="Apps tab: Microsoft Teams on Spanish, WhatsApp on French, Visual Studio Code on U.S., Claude on Russian"></td>
-    <td valign="top"><img src="docs/images/settings-websites.png" width="420" alt="Websites tab: teams.microsoft.com on Spanish, web.whatsapp.com on French, claude.ai on Russian, and the browsers' permission status"></td>
-  </tr>
-</table>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/websites-dark.svg">
+    <img src="docs/images/websites-light.svg" width="880" alt="In Chrome, clicking the teams.microsoft.com, web.whatsapp.com and claude.ai tabs turns the keyboard into Spanish, French and Russian">
+  </picture>
+</p>
 
-Or click the badge in the menu bar to set the app or website you're on.
+`teams.microsoft.com`, `web.whatsapp.com` and `claude.ai` each get their own keyboard, in Chrome, Brave and Safari.
 
-## 151 languages
+## It remembers what you pick.
 
-🇺🇸 🇪🇸 🇫🇷 🇷🇺 🇩🇪 🇮🇹 🇧🇷 🇯🇵 🇨🇳 🇰🇷 🇪🇬 🇮🇱 🇬🇷 🇮🇳 🇺🇦 🇹🇷 🇻🇳 🇹🇭 🇮🇷 🇵🇱 and 131 more.
+Switch by hand with <kbd>Control</kbd> <kbd>Space</kbd> or the globe key.
+That app or website gets the same keyboard back next time.
+
+## Every language on your Mac.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/languages-dark.svg">
+    <img src="docs/images/languages-light.svg" width="880" alt="The 151 languages macOS has keyboards for, each written in its own script">
+  </picture>
+</p>
+
+151 languages and 285 keyboards, each name above written the way macOS writes it.
+Japanese, Chinese and Korean included.
 
 <details>
 <summary><strong>See all 151 languages</strong></summary>
@@ -102,7 +118,49 @@ Tested by hand: German, Russian, Arabic, Greek, Hebrew and Japanese.
 
 </details>
 
+## Set it once.
+
+<table>
+  <tr>
+    <th>Apps</th>
+    <th>Websites</th>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/images/settings-apps.png" width="420" alt="Apps tab: Visual Studio Code on U.S., WhatsApp on French, Microsoft Teams on Spanish, Claude on Russian"></td>
+    <td valign="top"><img src="docs/images/settings-websites.png" width="420" alt="Websites tab: teams.microsoft.com on Spanish, web.whatsapp.com on French, claude.ai on Russian, and the browsers' permission status"></td>
+  </tr>
+</table>
+
+Or click the badge in the menu bar to set the app or website you're on.
+
+## Small, private, native.
+
+- The menu bar badge is drawn by macOS itself, pixel for pixel.
+- No network, no account, no analytics.
+- Native Swift, zero dependencies, opens at login.
+
 ## Install
+
+**[Download Keyboard Switcher](https://github.com/anthonysarkis/keyboard-switcher/releases/latest/download/Keyboard-Switcher.zip)**, open the zip, and drag **Keyboard Switcher** to Applications.
+Open it: its badge shows up in the menu bar.
+
+Or with [Homebrew](https://brew.sh):
+
+```sh
+brew install --cask anthonysarkis/tap/keyboard-switcher
+```
+
+Needs macOS 14 or later, on Apple Silicon or Intel.
+Signed with a Developer ID and notarized by Apple, so it opens like any app you download.
+
+> [!NOTE]
+> When macOS asks to let it control your browser, click **Allow**.
+> That is how it reads the tab's address.
+
+<details>
+<summary><strong>Build it yourself</strong></summary>
+
+<br>
 
 ```sh
 git clone https://github.com/anthonysarkis/keyboard-switcher.git
@@ -110,17 +168,20 @@ cd keyboard-switcher
 scripts/install.sh
 ```
 
-Needs macOS 14 or later and Xcode 26 (or its Command Line Tools).
-When macOS asks to let it control your browser, click **Allow**: that is how it reads the tab's address.
+- Needs Xcode 26 or later, or its Command Line Tools. It installs to `~/Applications`.
+- It signs with your Developer ID or Apple Development certificate, or "ad hoc" without one: the app works the same, but macOS asks for browser access again after each rebuild.
+- To pick the certificate: `SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/install.sh`.
+
+</details>
 
 <details>
-<summary><strong>Signing and uninstalling</strong></summary>
+<summary><strong>Uninstall</strong></summary>
 
 <br>
 
-- Your own certificate: `SIGNING_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/install.sh`.
-- No certificate: the app is signed "ad hoc" and works the same, but macOS asks for browser access again after each rebuild.
-- Uninstall: badge › Quit Keyboard Switcher, delete `~/Applications/Keyboard Switcher.app` and `~/Library/Application Support/com.anthonysarkis.keyboard-switcher`.
+1. Badge › Quit Keyboard Switcher.
+2. Move Keyboard Switcher from Applications (or `~/Applications` if you built it) to the Trash.
+3. To delete your rules too: `~/Library/Application Support/com.anthonysarkis.keyboard-switcher`.
 
 </details>
 
@@ -129,11 +190,21 @@ When macOS asks to let it control your browser, click **Allow**: that is how it 
 
 <br>
 
+```mermaid
+flowchart TD
+    front(["An app or a tab comes to the front"]) --> website["Rule for this website?"]
+    website -- no --> app["Rule for this app?"]
+    app -- no --> picked["Picked one by hand here before?"]
+    picked -- no --> keep(["Leave it as is"])
+    website -- yes --> switch(["Switch the keyboard"])
+    app -- yes --> switch
+    picked -- yes --> switch
+```
+
 1. `NSWorkspace` says which app came to the front.
 2. In a browser, Apple Events read the tab's address twice a second, only while you have a website rule.
-3. The website rule wins, then the app's rule, then the last keyboard used in that app.
-4. `TISSelectInputSource` switches the keyboard.
-5. The badge comes from `KLInputSourceIconManager`, the class behind the Mac's own input menu; if a macOS update removes it, the app draws the same badge itself.
+3. `TISSelectInputSource` switches the keyboard.
+4. The badge comes from `KLInputSourceIconManager`, the class behind the Mac's own input menu; if a macOS update removes it, the app draws the same badge itself.
 
 Rules live in one small JSON file: `~/Library/Application Support/com.anthonysarkis.keyboard-switcher/rules.json`.
 
@@ -166,7 +237,7 @@ Turn off "Remember keyboard changes you make yourself" in Settings › General, 
 
 - `swift test`: the rules and the switching engine, with stand-ins for macOS.
 - `swift run keyboard-switcher-dev keyboards | switch-test | badges | snapshots <folder>`: live checks.
-- `swift run keyboard-switcher-dev readme-images`: redraws the pictures in this README.
+- `swift run keyboard-switcher-dev readme-images`: redraws the pictures in this README, the animations included.
 - `swift run keyboard-switcher-dev languages`: prints the language table, straight from macOS.
 - Logs: `/usr/bin/log show --last 10m --predicate 'subsystem == "com.anthonysarkis.keyboard-switcher" AND process == "KeyboardSwitcher"'`.
 

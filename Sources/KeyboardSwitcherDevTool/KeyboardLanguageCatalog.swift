@@ -9,14 +9,18 @@ enum KeyboardLanguageCatalog {
     }
 
     static func languages() -> [KeyboardLanguage] {
+        let installedLanguageCodes = languageCodes()
+        let languages = installedLanguageCodes.compactMap(language(forCode:))
+        return languages.sorted { first, second in first.name.localizedStandardCompare(second.name) == .orderedAscending }
+    }
+
+    static func languageCodes() -> [String] {
         var languageCodes: Set<String> = []
         for keyboard in installedKeyboards() {
             guard let languageCode = mainLanguageCode(of: keyboard) else { continue }
             languageCodes.insert(languageCode)
         }
-
-        let languages = languageCodes.compactMap(language(forCode:))
-        return languages.sorted { first, second in first.name.localizedStandardCompare(second.name) == .orderedAscending }
+        return languageCodes.sorted()
     }
 
     private static func installedKeyboards() -> [TISInputSource] {

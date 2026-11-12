@@ -21,7 +21,7 @@ public struct BubbleView: View {
             .background(.regularMaterial, in: capsule)
             .overlay(outline)
             .shadow(color: Self.shadowColor, radius: 9, y: 4)
-            .padding(12)
+            .padding(BubbleMetrics.shadowPadding)
             .accessibilityElement(children: .combine)
     }
 }

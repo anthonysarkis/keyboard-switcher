@@ -6,12 +6,22 @@
 ## Commands
 
 - Test: `swift test`
-- Build the signed app: `scripts/build-app.sh` → `build/Keyboard Switcher.app`
+- Build the signed app: `scripts/build-app.sh` → `build/Keyboard Switcher.app` (this Mac's chip only)
 - Install and relaunch: `scripts/install.sh` → `~/Applications/Keyboard Switcher.app`
+- Release: raise `CFBundleShortVersionString` and `CFBundleVersion` in `App/Info.plist`, commit, push, then `scripts/release.sh`.
+  - It runs `scripts/build-app.sh --release` (Apple Silicon + Intel, Developer ID, Apple's timestamp), sends the zip to Apple's notary service, staples the ticket and publishes `Keyboard-Switcher.zip` as GitHub release `v<version>`.
+  - Then `scripts/update-homebrew-cask.sh` points the cask (`Casks/keyboard-switcher.rb` in `anthonysarkis/homebrew-tap`) at that zip: version and SHA-256 of the published file.
+  - Needs the "Developer ID Application" certificate and the notary login saved in the keychain as `notary` (`xcrun notarytool store-credentials notary`).
+  - The README's download link is `releases/latest/download/Keyboard-Switcher.zip`: keep that file name.
 - Dev checks: `swift run keyboard-switcher-dev keyboards | switch-test | badges | snapshots <folder>`
 - Check UI changes with `snapshots`, then read the PNGs.
-- README pictures: `swift run keyboard-switcher-dev readme-images` redraws `docs/images` (hero + Settings tabs).
-  - The example (Teams in Spanish, WhatsApp in French, VS Code in English, Claude Code in Russian) lives in `ReadmeExample`.
+- README pictures: `swift run keyboard-switcher-dev readme-images` redraws `docs/images`: the hero, websites and languages animations (SVG, light and dark) and the Settings tabs.
+  - The example (VS Code in English, WhatsApp in French, Teams in Spanish, Claude in Russian, three websites, the typed messages) lives in `ReadmeExample`.
+  - `ReadmeExample.macBadges` holds macOS's own badge for each keyboard; the command stops if one no longer matches macOS pixel for pixel.
+  - The bubble's size, place and timing come from `BubbleMetrics`, the numbers the app itself uses.
+  - GitHub shows README SVGs as images under `default-src 'none'`: CSS keyframes only, no scripts, no outside files, every picture embedded as PNG.
+  - No live blur in the SVGs (browsers repaint it every frame): shadows are drawn ahead as PNGs by `ShadowPainter`.
+  - Measure text at the font size the SVG writes (2 decimals): CoreText widths differ between 14.4 and 12 × 1.2.
   - App icons come from `docs/app-icons`, not this Mac, so the pictures look the same on any Mac; the Apps tab gets them through `appIconOverrides`.
   - `docs/images/icon.png` is `build/AppIcon.iconset/icon_256x256@2x.png`.
 - README language table: `swift run keyboard-switcher-dev languages` prints it from macOS; paste it over the table in README.md.
@@ -48,7 +58,8 @@
 ## Gotchas
 
 - Keyboard change notices need `.deliverImmediately`; a menu bar app is never active, so macOS would hold them.
-- Always sign with the same Apple Development identity, or macOS forgets the browsers' "Allow".
+- Always sign with the same identity, or macOS forgets the browsers' "Allow": the build script picks Developer ID first, then Apple Development, then ad hoc (`SIGNING_IDENTITY` overrides).
+- `syspolicy_check notary-submission` rejects every app Apple hasn't notarized yet ("Gatekeeper rejected this file"), so the release script relies on the notary service's own log instead.
 - Never let a tab read trigger macOS's "allow" question: reads time out after 1 second, which closes the question, and the next read opens a new one. Ask with `BrowserTabTracker.requestPermission` (off the main thread, one at a time) and read tabs only when allowed.
 - Tabs are read only while a website rule exists, or once when the badge menu opens in a browser.
 - Right after a switch, macOS can put back the previous app's keyboard for 20 to 60 ms: `ManualSwitchDetector` ignores changes for 600 ms after each switch, then the coordinator re-selects once if needed.

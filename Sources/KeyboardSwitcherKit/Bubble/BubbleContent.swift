@@ -2,8 +2,7 @@ import AppKit
 import SwiftUI
 
 public struct BubbleContent: View {
-    public static let height: CGFloat = 28
-    private static let nameFont = Font.system(size: 12, weight: .semibold)
+    private static let nameFont = Font.system(size: BubbleMetrics.nameFontSize, weight: .semibold)
 
     let badgeImage: NSImage
     let keyboardName: String
@@ -14,15 +13,15 @@ public struct BubbleContent: View {
     }
 
     public var body: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: BubbleMetrics.badgeToNameSpacing) {
             Image(nsImage: badgeImage)
                 .renderingMode(.template)
                 .accessibilityHidden(true)
             Text(keyboardName)
                 .font(Self.nameFont)
         }
-        .padding(.leading, 8)
-        .padding(.trailing, 12)
-        .frame(height: Self.height)
+        .padding(.leading, BubbleMetrics.leadingPadding)
+        .padding(.trailing, BubbleMetrics.trailingPadding)
+        .frame(height: BubbleMetrics.height)
     }
 }
